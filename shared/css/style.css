@@ -62,6 +62,21 @@ h3 {
     background: linear-gradient(180deg, #e8283a, #b9141f);
     border-color: transparent;
     box-shadow: 0 8px 24px rgba(225, 29, 46, 0.3);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+.btn.red:hover:not(:disabled),
+.btn.red:focus-visible:not(:disabled) {
+    filter: brightness(1.15);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(225, 29, 46, 0.5);
+}
+.btn.red:active:not(:disabled) {
+    filter: brightness(1.05);
+    transform: translateY(0);
+    box-shadow: 0 5px 14px rgba(225, 29, 46, 0.35);
 }
 .btn:focus-visible,
 a:focus-visible,
@@ -183,7 +198,8 @@ footer .logo img {
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease,
-        background 0.2s ease;
+        background 0.2s ease,
+        filter 0.2s ease;
 }
 .auth .btn.red:hover,
 .auth .btn.red:focus-visible {
@@ -201,7 +217,18 @@ footer .logo img {
     .auth .btn {
         transition: none;
     }
+    .auth .btn.red {
+        transition: none;
+    }
     .auth .btn.red:hover {
+        transform: none;
+    }
+    .btn.red {
+        transition: none;
+    }
+    .btn.red:hover,
+    .btn.red:focus-visible,
+    .btn.red:active {
         transform: none;
     }
 }
@@ -586,6 +613,8 @@ footer .logo img {
 @media (prefers-reduced-motion: reduce) {
     .card,
     .card *,
+    .dest,
+    .dest img,
     .price .btn,
     .price .btn .arr {
         transition: none;
@@ -593,6 +622,12 @@ footer .logo img {
     .card:hover,
     .card:hover .pic img,
     .card:hover .pic em {
+        transform: none;
+    }
+    .dest:hover,
+    .dest:focus-visible,
+    .dest:hover img,
+    .dest:focus-visible img {
         transform: none;
     }
 }
@@ -620,6 +655,10 @@ footer .logo img {
     justify-content: end;
     padding: 22px;
     border: 1px solid var(--line);
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 .dest img {
     position: absolute;
@@ -627,6 +666,20 @@ footer .logo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.6s ease;
+}
+.dest:hover,
+.dest:focus-visible {
+    transform: translateY(-6px);
+    border-color: var(--red);
+    box-shadow:
+        0 16px 36px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(225, 29, 46, 0.3),
+        0 10px 28px rgba(225, 29, 46, 0.18);
+}
+.dest:hover img,
+.dest:focus-visible img {
+    transform: scale(1.06);
 }
 .dest::before {
     content: '';
