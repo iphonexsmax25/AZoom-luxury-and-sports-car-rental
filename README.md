@@ -74,6 +74,10 @@ AZoom/
 │   │   └── dashboard.html
 │   ├── employee/
 │   │   └── employee.html
+│   ├── faq/
+│   │   ├── faq.html
+│   │   ├── faq.css
+│   │   └── faq.js
 │   ├── settings/
 │   │   ├── settings.html
 │   │   └── settings.js

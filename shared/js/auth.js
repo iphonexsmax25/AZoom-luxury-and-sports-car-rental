@@ -72,6 +72,7 @@ const Auth = (() => {
         card: '<rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19M6 15h3"/>',
         user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/>',
         phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/>',
+        faq: '<circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.3 2.3 0 114.2 1.3c-.9 1.1-2 1.2-2 2.7M12 17h.01"/>',
         pin: '<path d="M12 22s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>',
         print: '<path d="M6 9V3h12v6"/><path d="M6 18H4a1 1 0 01-1-1v-6a2 2 0 012-2h14a2 2 0 012 2v6a1 1 0 01-1 1h-2"/><rect x="6" y="14" width="12" height="7"/>',
         doc: '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4M10 12h6M10 16h4"/>',
@@ -782,13 +783,15 @@ const Auth = (() => {
                 home: 'home',
                 fleet: 'car',
                 contact: 'phone',
+                faq: 'faq',
             };
         const item = (h, l, i) =>
             `<a class="mm-item${cur === h ? ' on' : ''}" href="${h}">${ic(i, 18)}<span>${l}</span></a>`;
         const main =
             item('../home/home.html', 'Home', ico.home) +
             item('../fleet/fleet.html', 'Fleet', ico.fleet) +
-            item('../contact/contact.html', 'Contact', ico.contact);
+            item('../contact/contact.html', 'Contact', ico.contact) +
+            item('../faq/faq.html', 'FAQ', ico.faq);
         const rest = u
             ? `<div class="mm-sep"></div>` +
               (u.role === 'employee'
