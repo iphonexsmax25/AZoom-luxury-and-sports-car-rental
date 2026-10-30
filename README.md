@@ -26,7 +26,7 @@ The website includes an employee portal for managing active bookings, vehicle re
 
 ## Project structure
 
-The project is organised by responsibility. Page-specific files are stored inside `pages/`, reusable files are stored inside `shared/`, vehicle data is stored inside `data/`, and all visual assets are stored inside `images/`.
+The project is organised by responsibility. Page-specific files are stored inside `pages/`, reusable files are stored inside `shared/`, vehicle data is stored inside `data/`, website imagery is stored inside `images/`, and browser and mobile icons are stored inside `icons/`.
 
 ```text
 AZoom/
@@ -43,6 +43,15 @@ AZoom/
 │   ├── cars/                          # Vehicle images
 │   │   └── ALL-FILENAMES.txt          # Required vehicle image filenames
 │   └── places/                        # Singapore destination images
+│
+├── icons/                             # Browser and mobile app icons
+│   ├── favicon.ico                    # Multi-size browser favicon
+│   ├── favicon-16x16.png              # Small browser tab icon
+│   ├── favicon-32x32.png              # Standard browser tab icon
+│   ├── apple-touch-icon.png           # iOS home-screen icon
+│   ├── android-chrome-192x192.png     # Android home-screen icon
+│   ├── android-chrome-512x512.png     # High-resolution Android icon
+│   └── site.webmanifest               # PWA/browser icon metadata
 │
 ├── pages/                             # Individual website pages
 │   ├── home/
@@ -114,6 +123,7 @@ AZoom/
 
 - **`data/`** stores the vehicle catalogue and sample review data.
 - **`images/`** stores the logo, home banner, vehicle photos and destination photos.
+- **`icons/`** stores browser favicons, mobile home-screen icons and the web manifest.
 - **`pages/`** keeps each page's HTML, CSS and JavaScript files together.
 - **`shared/css/`** contains styles used across multiple pages.
 - **`shared/js/`** contains shared website functions and business rules.
