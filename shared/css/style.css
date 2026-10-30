@@ -83,6 +83,7 @@ h3 {
         transparent
     );
     transform: skewX(-20deg);
+    transition: left 0.6s ease;
     pointer-events: none;
 }
 .btn.red:hover:not(:disabled),
@@ -94,7 +95,6 @@ h3 {
 .btn.red:hover:not(:disabled)::before,
 .btn.red:focus-visible:not(:disabled)::before {
     left: 125%;
-    transition: left 0.6s ease;
 }
 .btn.red:active:not(:disabled) {
     filter: brightness(1.05);
@@ -247,6 +247,9 @@ footer .logo img {
         transform: none;
     }
     .btn.red {
+        transition: none;
+    }
+    .btn.red::before {
         transition: none;
     }
     .btn.red:hover,
