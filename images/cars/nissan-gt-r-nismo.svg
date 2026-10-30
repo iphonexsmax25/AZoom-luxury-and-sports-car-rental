@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Nissan Gt-R Nismo (illustration)">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b1b22"/><stop offset="1" stop-color="#0b0b0e"/></linearGradient>
+<linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f4f4"/><stop offset="1" stop-color="#b8bcc4"/></linearGradient>
+<radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#e11d2e" stop-opacity=".28"/><stop offset="1" stop-color="#e11d2e" stop-opacity="0"/></radialGradient></defs>
+<rect width="1200" height="800" fill="url(#bg)"/><ellipse cx="600" cy="560" rx="480" ry="90" fill="url(#glow)"/>
+<ellipse cx="600" cy="585" rx="420" ry="26" fill="#000" opacity=".55"/>
+<path d="M150 520 C150 470 190 450 260 440 L430 410 C480 340 560 300 680 300 C780 300 850 335 905 405 L980 425 C1040 438 1060 470 1058 520 L1050 545 L150 545 Z" fill="url(#body)"/>
+<path d="M452 410 C495 350 560 322 660 322 C750 322 805 350 850 408 Z" fill="#12151b"/>
+<path d="M640 322 L640 408 M452 410 L850 408" stroke="#7d838c" stroke-width="5" fill="none"/>
+<path d="M150 520 L1050 520" stroke="#4a4f57" stroke-width="3"/>
+<rect x="1000" y="468" width="52" height="16" rx="6" fill="#f4f1d0"/><rect x="150" y="470" width="46" height="14" rx="5" fill="#e11d2e"/><path d="M1030 520l30-4v8l-30 4z" fill="#e11d2e"/><rect x="190" y="505" width="840" height="9" fill="#e11d2e"/><path d="M105 372h150v16H105z" fill="#15171c"/><path d="M135 388v90" stroke="#15171c" stroke-width="9"/><path d="M225 388v90" stroke="#15171c" stroke-width="9"/>
+<g><circle cx="330" cy="545" r="74" fill="#0b0b0e"/><circle cx="330" cy="545" r="46" fill="#e11d2e"/><circle cx="330" cy="545" r="16" fill="#0b0b0e"/>
+<circle cx="870" cy="545" r="74" fill="#0b0b0e"/><circle cx="870" cy="545" r="46" fill="#e11d2e"/><circle cx="870" cy="545" r="16" fill="#0b0b0e"/></g>
+<text x="600" y="690" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="30" letter-spacing="6" fill="#8a8f99">NISSAN GT-R NISMO</text>
+</svg>

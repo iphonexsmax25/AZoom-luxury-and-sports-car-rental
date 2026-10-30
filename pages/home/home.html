@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>AZoom | Sports & Luxury Car Rental in Singapore</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <link rel="stylesheet" href="../../shared/css/style.css">
+        <link rel="stylesheet" href="../../shared/css/rental-discounts.css">
+        <link rel="stylesheet" href="../../shared/css/compare.css">
+        <link rel="stylesheet" href="../../shared/css/reviews.css">
+        <link rel="stylesheet" href="home.css">
+    </head>
+    <body>
+        <nav>
+            <div class="wrap">
+                <a href="#home" class="logo" aria-label="AZoom home"
+                    ><img src="../../images/azoom-logo.png" alt="AZoom: Luxury &amp; Sports Car Rental"></a>
+                <div class="links">
+                    <a href="#home" class="on">Home</a><a href="../fleet/fleet.html">Fleet</a
+                    ><a href="../contact/contact.html">Contact</a>
+                </div>
+                <div class="auth">
+                </div>
+            </div>
+        </nav>
+
+        <header class="hero" id="home">
+            <div class="wrap">
+                <div class="audience" role="group" aria-label="I am a">
+                    <button aria-pressed="true" data-who="tourist">I'm visiting Singapore</button>
+                    <button aria-pressed="false" data-who="local">I live in Singapore</button>
+                </div>
+                <h1>Drive the <span>finest cars</span> in the Lion City</h1>
+                <p class="lead">
+                    Supercars, grand tourers and executive limousines, ready for Marina Bay by night or the East Coast
+                    on a Sunday morning.
+                </p>
+                <div class="cta">
+                    <a href="#fleet" class="btn red">Explore fleet &rarr;</a
+                    ><a href="#plans" class="btn">See pricing</a>
+                </div>
+                <p class="note" id="note" aria-live="polite"></p>
+                <div class="stats">
+                    <div><b>40+</b><small>SPORTS &amp; LUXURY CARS</small></div>
+                    <div><b>12K+</b><small>HAPPY DRIVERS</small></div>
+                    <div><b>4.9&#9733;</b><small>AVG RATING</small></div>
+                </div>
+                <form class="search" id="search-form" novalidate>
+                    <div class="field">
+                        <label for="loc">Pickup Branch</label>
+                        <select id="loc"></select>
+                    </div>
+                    <div class="field"><label for="d1">Pick-up date</label><input id="d1" type="date" aria-describedby="date-error" required></div>
+                    <div class="field"><label for="d2">Return date</label><input id="d2" type="date" aria-describedby="date-error" required></div>
+                    <button class="btn red" id="find-cars" type="submit" disabled>Find cars</button>
+                    <p class="date-validation-error" id="date-error" role="alert" aria-live="polite"></p>
+                </form>
+            </div>
+        </header>
+
+        <div class="trust">
+            <div class="wrap">
+                <div class="t">
+                    <i>&#9889;</i>
+                    <div><b>Instant booking</b><small>Confirm in minutes</small></div>
+                </div>
+                <div class="t">
+                    <i>&#9960;</i>
+                    <div><b>Full insurance</b><small>Comprehensive coverage</small></div>
+                </div>
+                <div class="t">
+                    <i>&#9719;</i>
+                    <div><b>24/7 support</b><small>Round-the-clock help</small></div>
+                </div>
+                <div class="t">
+                    <i>&#9733;</i>
+                    <div><b>Certified fleet</b><small>Inspected &amp; maintained</small></div>
+                </div>
+            </div>
+        </div>
+
+        <section id="fleet">
+            <div class="wrap">
+                <div class="head">
+                    <div>
+                        <span class="eyebrow">Featured fleet</span>
+                        <h2>Top-rated sports &amp; luxury</h2>
+                    </div>
+                    <a href="../fleet/fleet.html" class="eyebrow" style="color:var(--mute)">View all &rarr;</a>
+                </div>
+                <div class="grid3" id="cars"></div>
+            </div>
+        </section>
+
+        <section style="padding-top:0">
+            <div class="wrap">
+                <div class="center">
+                    <span class="eyebrow">Explore Singapore</span>
+                    <h2>Where will you drive?</h2>
+                    <p>Scenic routes and pick-up points, from the city skyline to the coast.</p>
+                </div>
+                <div class="grid3" id="dests" style="margin-top:40px"></div>
+            </div>
+        </section>
+
+        <section id="plans" style="padding-top:0">
+            <div class="wrap">
+                <div class="center">
+                    <span class="eyebrow">Rental plans</span>
+                    <h2>Simple, transparent pricing</h2>
+                </div>
+                <div class="plans">
+                    <div class="plan">
+                        <h3>Day Drive</h3>
+                        <p>A quick spin around the island</p>
+                        <div class="amt">S$680 <small>per day</small></div>
+                        <ul>
+                            <li>1 day rental</li>
+                            <li>Basic insurance</li>
+                            <li>150 km included</li>
+                            <li>City pick-up</li>
+                        </ul>
+                        <a href="../signup/signup.html" class="btn">Choose plan</a>
+                    </div>
+                    <div class="plan hot">
+                        <span class="pop">MOST POPULAR</span>
+                        <h3>Weekender</h3>
+                        <p>Ideal for visitors and weekend drivers</p>
+                        <div class="amt">S$1,800 <small>3 days</small></div>
+                        <ul>
+                            <li>3 day rental</li>
+                            <li>Full insurance</li>
+                            <li>450 km included</li>
+                            <li>Changi Airport or hotel delivery</li>
+                            <li>24/7 roadside assist</li>
+                        </ul>
+                        <a href="../signup/signup.html" class="btn">Choose plan</a>
+                    </div>
+                    <div class="plan">
+                        <h3>Week Away</h3>
+                        <p>The ultimate Singapore drive</p>
+                        <div class="amt">S$4,200 <small>7 days</small></div>
+                        <ul>
+                            <li>7 day rental</li>
+                            <li>Premium insurance</li>
+                            <li>Unlimited km</li>
+                            <li>Door-to-door delivery</li>
+                            <li>Personal concierge</li>
+                        </ul>
+                        <a href="../signup/signup.html" class="btn">Choose plan</a>
+                    </div>
+                </div>
+                <p class="fine">
+                    Prices are placeholders. Visitors: bring your valid driving licence (and an International Driving
+                    Permit if it is not in English). Locals: a valid Singapore licence is required.
+                </p>
+            </div>
+        </section>
+
+        <section style="padding-top:0">
+            <div class="wrap">
+                <div class="center">
+                    <span class="eyebrow">Testimonials</span>
+                    <h2>What our drivers say</h2>
+                </div>
+                <div class="grid3" id="revs" style="margin-top:40px"></div>
+            </div>
+        </section>
+
+        <section style="padding-top:0" id="contact">
+            <div class="wrap">
+                <div class="banner">
+                    <h2>Ready to hit the road?</h2>
+                    <p>
+                        Join thousands of visitors and Singaporeans who drive with AZoom. Create a free account and book
+                        in minutes.
+                    </p>
+                    <a href="../signup/signup.html" class="btn">Create free account &rarr;</a>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="wrap">
+                <div class="fgrid">
+                    <div>
+                        <a href="#home" class="logo" aria-label="AZoom home"
+                            ><img src="../../images/azoom-logo.png" alt="AZoom: Luxury &amp; Sports Car Rental"></a>
+                        <p>
+                            Singapore's sports and luxury car rental for visitors and locals. Drive something
+                            unforgettable.
+                        </p>
+                    </div>
+                    <div>
+                        <h4>EXPLORE</h4>
+                        <ul>
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="../fleet/fleet.html">Our fleet</a></li>
+                            <li><a href="../contact/contact.html">Contact</a></li>
+                            <li><a href="../login/login.html">My account</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>CATEGORIES</h4>
+                        <ul>
+                            <li>Supercars</li>
+                            <li>Grand tourers</li>
+                            <li>Luxury sedans</li>
+                            <li>Convertibles</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>PICK-UP POINTS</h4>
+                        <ul>
+                            <li><a href="../contact/contact.html">All 12 branches</a></li>
+                            <li>Raffles Place (HQ)</li>
+                            <li>Marina Bay</li>
+                            <li>Changi Airport</li>
+                            <li>Jurong East</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="social-icons" role="group" aria-label="Follow AZoom on social media">
+                    <a href="https://www.instagram.com/isaacphotography_sg/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+                    </a>
+                    <a href="https://www.facebook.com/profile.php?id=61595265595671" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@IsaacLim2610" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                        <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <div class="legal">
+                    <span>&copy; 2026 AZoom. All rights reserved.</span
+                    ><span
+                        ><a href="../privacy/privacy.html">Privacy Policy</a> &nbsp;
+                        <a href="../terms/terms.html">Terms &amp; Conditions</a></span
+                    >
+                </div>
+            </div>
+        </footer>
+
+        <script src="../../shared/js/auth.js"></script>
+        <script src="../../shared/js/rental-discounts.js"></script>
+        <script src="../../shared/js/booking-dates.js"></script>
+        <script src="../../shared/js/branches.js"></script>
+        <script src="../../shared/js/cars-loader.js"></script>
+        <script src="../../shared/js/compare.js"></script>
+        <script src="../../shared/js/review-seed.js"></script>
+        <script src="../../shared/js/reviews.js"></script>
+        <script src="home.js"></script>
+    </body>
+</html>

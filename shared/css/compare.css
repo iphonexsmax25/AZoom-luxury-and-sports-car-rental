@@ -1,0 +1,461 @@
+/* Compare feature (used on the home page and the fleet page) */
+.nav-cmp[hidden],
+.cmpbar[hidden],
+.cmpmodal[hidden] {
+    display: none;
+}
+
+/* Compare button on each car card */
+.cmp {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    z-index: 1;
+    background: rgba(30, 30, 34, 0.85);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font:
+        600 12px Inter,
+        sans-serif;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition:
+        background 0.2s,
+        border-color 0.2s,
+        transform 0.2s;
+}
+.cmp:hover {
+    border-color: var(--red);
+    transform: translateY(-1px);
+}
+.cmp[aria-pressed='true'] {
+    background: var(--red);
+    border-color: var(--red);
+}
+
+/* Nav button: pops in next to Login once a car is selected */
+.nav-cmp {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(225, 29, 46, 0.1);
+    border: 1px solid rgba(225, 29, 46, 0.45);
+    color: var(--red2);
+    padding: 7px 14px;
+    border-radius: 10px;
+    font:
+        600 14px Inter,
+        sans-serif;
+    cursor: pointer;
+    animation: cmppop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+    transition:
+        background 0.2s,
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+.nav-cmp:hover {
+    background: rgba(225, 29, 46, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(225, 29, 46, 0.3);
+}
+.nav-cmp-n {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--red);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* Bottom bar */
+body.has-cmpbar {
+    padding-bottom: 68px;
+}
+.cmpbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    background: rgba(14, 14, 17, 0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line);
+    animation: cmpup 0.3s ease;
+}
+.cmpbar .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    height: 68px;
+}
+.cmpinfo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-weight: 600;
+    font-size: 14px;
+    min-width: 0;
+}
+.cmpinfo > svg {
+    color: var(--red2);
+    flex: none;
+}
+.thumbs {
+    display: flex;
+    gap: 10px;
+    min-width: 0;
+    overflow: hidden;
+}
+.chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #1a1a1e;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 4px 6px 4px 4px;
+    max-width: 210px;
+}
+.cname {
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.chipx {
+    background: none;
+    border: 0;
+    color: var(--mute);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    transition: color 0.2s;
+}
+.chipx:hover {
+    color: var(--red2);
+}
+.thumb {
+    position: relative;
+    overflow: hidden;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.7);
+}
+.cmpact {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: none;
+}
+.cmpclear {
+    background: none;
+    border: 0;
+    color: var(--mute);
+    font:
+        500 14px Inter,
+        sans-serif;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.cmpclear:hover {
+    color: var(--text);
+}
+.cmpact .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+}
+.cmpact .btn[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Comparison window */
+body.noscroll {
+    overflow: hidden;
+}
+.cmpmodal {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(6px);
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    animation: cmpfade 0.2s ease;
+}
+.cmpdlg {
+    background: #0f0f12;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 1100px;
+    max-height: calc(100vh - 40px);
+    overflow: auto;
+    animation: cmprise 0.3s ease;
+}
+.cmpdlg header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 26px;
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    background: #0f0f12;
+    z-index: 2;
+}
+.cmpdlg h2 {
+    font-size: 22px;
+    font-weight: 800;
+}
+.cmpdlg .x {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: none;
+    color: var(--mute);
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+        color 0.2s,
+        border-color 0.2s;
+}
+.cmpdlg .x:hover {
+    color: var(--text);
+    border-color: var(--line);
+}
+.cmpbody {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    padding: 24px 26px;
+}
+.cc {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+}
+.ccimg {
+    position: relative;
+    height: 190px;
+    overflow: hidden;
+}
+.thumb img,
+.ccimg img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.ccimg em {
+    position: absolute;
+    right: 14px;
+    bottom: 8px;
+    font: 800 40px Inter;
+    font-style: normal;
+    color: rgba(255, 255, 255, 0.08);
+    letter-spacing: -0.04em;
+}
+.cc .rm {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+        background 0.2s,
+        border-color 0.2s;
+}
+.cc .rm:hover {
+    background: var(--red);
+    border-color: var(--red);
+}
+.cc .in {
+    padding: 18px;
+}
+.cc small {
+    color: var(--mute);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+.cc h3 {
+    font-size: 20px;
+    margin: 4px 0 12px;
+}
+.hl {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.hl:not(:empty) {
+    margin-bottom: 12px;
+}
+.hl span {
+    background: rgba(212, 169, 90, 0.12);
+    color: var(--gold);
+    border: 1px solid rgba(212, 169, 90, 0.3);
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.crow {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+    font-size: 14px;
+    color: var(--mute);
+}
+.crow b {
+    color: var(--text);
+    font-weight: 700;
+    text-align: right;
+}
+.crow b.best {
+    color: var(--gold);
+}
+.feats {
+    border-top: 1px solid var(--line);
+    margin-top: 10px;
+    padding-top: 12px;
+}
+.feats p {
+    font-size: 12px;
+    color: var(--mute);
+    margin-bottom: 8px;
+}
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.chips span {
+    background: #1c1c21;
+    border-radius: 6px;
+    padding: 5px 9px;
+    font-size: 11px;
+    color: #c4c4cc;
+}
+.chips span::before {
+    content: '\2713';
+    color: var(--red2);
+    margin-right: 6px;
+}
+.cmphint {
+    display: grid;
+    place-items: center;
+    text-align: center;
+    color: var(--mute);
+    border: 1px dashed var(--line);
+    border-radius: 16px;
+    padding: 24px;
+    font-size: 14px;
+}
+.cmplegend {
+    padding: 0 26px 22px;
+    font-size: 12px;
+    color: var(--mute);
+}
+.cmplegend b {
+    color: var(--gold);
+}
+
+@keyframes cmppop {
+    from {
+        opacity: 0;
+        transform: scale(0.6);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+@keyframes cmpup {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: none;
+    }
+}
+@keyframes cmpfade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@keyframes cmprise {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (max-width: 900px) {
+    .cname {
+        display: none;
+    }
+}
+@media (max-width: 600px) {
+    .thumbs {
+        display: none;
+    }
+    .cmpinfo {
+        font-size: 13px;
+    }
+    .nav-cmp {
+        padding: 6px 10px;
+    }
+    .cmpbody {
+        padding: 18px 16px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .nav-cmp,
+    .cmpbar,
+    .cmpmodal,
+    .cmpdlg {
+        animation: none;
+    }
+    .cmp,
+    .nav-cmp,
+    .cc .rm {
+        transition: none;
+    }
+}

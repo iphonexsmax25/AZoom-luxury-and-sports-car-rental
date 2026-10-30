@@ -1,0 +1,162 @@
+.rental-deals {
+    min-width: 0;
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid rgba(212, 169, 90, 0.22);
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(212, 169, 90, 0.08), rgba(19, 19, 22, 0.72));
+}
+.rental-deals > strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #ead4a6;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+.deal-badges,
+.deal-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.deal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 100%;
+    padding: 5px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    background: rgba(9, 9, 11, 0.66);
+    color: var(--text);
+    font-size: 12px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+.deal-pills {
+    margin-top: 8px;
+}
+.deal-pill {
+    border-radius: 999px;
+    padding: 3px 7px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.deal-pill.weekly {
+    color: #f1d080;
+    background: rgba(212, 169, 90, 0.14);
+}
+.deal-pill.longterm {
+    color: #b7d9ff;
+    background: rgba(90, 150, 212, 0.15);
+}
+.deal-pill.best {
+    color: #9af0b2;
+    background: rgba(34, 197, 94, 0.13);
+}
+.savings-card {
+    display: grid;
+    gap: 0;
+    margin: 18px 0;
+    padding: 20px;
+    border: 1px solid rgba(34, 197, 94, 0.28);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.08), var(--panel) 64%);
+    animation: savings-in 0.35s ease both;
+}
+.savings-card h3 {
+    margin-bottom: 12px;
+    font-size: 17px;
+}
+.savings-card .saving-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 13px;
+}
+.savings-card .saving-line span:first-child {
+    color: var(--mute);
+}
+.savings-card .saving-line strong {
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+.savings-card .saving-green,
+.savings-card .saving-green strong {
+    color: #4ade80;
+}
+.savings-card .saving-green span:first-child::before {
+    content: '\2713';
+    margin-right: 5px;
+}
+.savings-card.deal-changed {
+    animation: savings-in 0.35s ease both;
+}
+.savings-card .saving-total {
+    margin-top: 4px;
+    padding-top: 12px;
+    border-bottom: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+.savings-card .saving-total strong {
+    color: var(--text);
+    font-size: 20px;
+}
+.savings-card .saving-breakdown {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(9, 9, 11, 0.55);
+    color: var(--mute);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+.savings-card .saving-breakdown p + p {
+    margin-top: 5px;
+}
+@keyframes savings-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@media (max-width: 480px) {
+    .rental-deals {
+        padding: 10px;
+    }
+    .deal-badge {
+        white-space: normal;
+        font-size: 11px;
+    }
+    .deal-pill {
+        font-size: 10px;
+    }
+    .savings-card {
+        padding: 14px;
+    }
+    .savings-card .saving-line {
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 12px;
+    }
+    .savings-card .saving-total strong {
+        font-size: 18px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .savings-card,
+    .savings-card.deal-changed {
+        animation: none;
+    }
+}
