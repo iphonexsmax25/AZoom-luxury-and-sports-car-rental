@@ -440,6 +440,25 @@
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 14px;
 }
+.rejection-note {
+    margin: 14px 0;
+    padding: 14px 16px;
+    border: 1px solid rgba(225, 29, 46, 0.35);
+    border-radius: 12px;
+    background: rgba(225, 29, 46, 0.08);
+}
+.rejection-note b {
+    display: block;
+    margin-bottom: 5px;
+    color: #ff7b85;
+    font-size: 13px;
+}
+.rejection-note p {
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
 .bkmeta small {
     display: block;
     font-size: 10px;

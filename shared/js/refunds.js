@@ -170,7 +170,14 @@ const Refunds = (() => {
                 'GPS Tracking Acknowledged',
                 b.gpsAcknowledged === true ? 'Yes' : 'Not recorded (booked before this policy)',
             ],
-            ['Refund Eligibility', eligibility(b)],
+            [
+                'Refund Eligibility',
+                b.status === 'rejected'
+                    ? r.refundAmount > 0
+                        ? `Refund for booking rejection: ${money(r.refundAmount)} approved.`
+                        : 'No refund due for this booking rejection.'
+                    : eligibility(b),
+            ],
             ['Refund Status', r ? ST[r.status].label : 'Not applicable', r ? r.status : ''],
             [
                 'Refund Amount',
@@ -180,8 +187,16 @@ const Refunds = (() => {
                       ? money(opts.refundAmount)
                       : 'N/A',
             ],
-            ['Cancellation Date', r ? dt(b.cancelledAt || r.cancelledAt) : 'Not cancelled'],
-            ['Cancellation Reason', r ? b.cancellationReason || r.reason || 'Not recorded' : 'N/A'],
+            [
+                b.status === 'rejected' ? 'Rejection Date' : 'Cancellation Date',
+                r ? dt(b.rejectedAt || b.cancelledAt || r.cancelledAt) : 'Not cancelled',
+            ],
+            [
+                b.status === 'rejected' ? 'Rejection Reason' : 'Cancellation Reason',
+                r
+                    ? b.rejectionReason || b.cancellationReason || r.reason || 'Not recorded'
+                    : 'N/A',
+            ],
         ];
     }
 
@@ -320,10 +335,14 @@ const Refunds = (() => {
         reason = String(reason || '')
             .trim()
             .replace(/\s+/g, ' ');
-        if (emp && reason.length < 3)
-            throw Error(outcome === 'rejected' ? 'Enter a rejection reason.' : 'Enter a cancellation reason.');
+        if (outcome === 'rejected' && !reason)
+            throw Error('Enter a rejection reason.');
+        if (emp && outcome !== 'rejected' && reason.length < 3)
+            throw Error('Enter a cancellation reason.');
         if (reason.length > 300)
-            throw Error('The cancellation reason must be 300 characters or fewer.');
+            throw Error(
+                `The ${outcome === 'rejected' ? 'rejection' : 'cancellation'} reason must be 300 characters or fewer.`,
+            );
         if (!reason) reason = 'Customer requested cancellation';
         const now = Date.now(),
             kind = emp ? 'employee' : 'customer',
@@ -341,13 +360,18 @@ const Refunds = (() => {
         const a = all();
         a.push(rec);
         save(a);
-        const entry = {
-            at: now,
-            byId: by.id,
-            byName: by.name,
-            action: outcome === 'rejected' ? 'Booking rejected' : 'Booking cancelled',
-            detail: `${by.name} (${by.id}) ${outcome === 'rejected' ? 'rejected' : 'cancelled'} booking ${b.id}. Reason: ${reason}. Refund ${money(q.refund)} approved (${q.method}), reference ${rec.ref}.`,
-        };
+        const customerName = b.name || A.nameOf(b.email),
+            vehicleName = b.title || 'Unknown vehicle',
+            entry = {
+                at: now,
+                byId: by.id,
+                byName: by.name,
+                action: outcome === 'rejected' ? 'Booking rejected' : 'Booking cancelled',
+                detail:
+                    outcome === 'rejected'
+                        ? `Booking ID: ${b.id}; Customer: ${customerName}; Vehicle: ${vehicleName}; Rejected at: ${A.stamp(now)}; Employee: ${by.name} (${by.id}); Reason: ${reason}. Refund ${money(q.refund)} approved (${q.method}), reference ${rec.ref}.`
+                        : `${by.name} (${by.id}) cancelled booking ${b.id}. Reason: ${reason}. Refund ${money(q.refund)} approved (${q.method}), reference ${rec.ref}.`,
+            };
         A.update(b.id, {
             status: outcome,
             cancelledAt: now,
@@ -363,6 +387,15 @@ const Refunds = (() => {
                       rejectedBy: by.id,
                       rejectedByName: by.name,
                       rejectionReason: reason,
+                      rejectionAudit: {
+                          bookingId: b.id,
+                          customerName,
+                          vehicleName,
+                          rejectedAt: now,
+                          employeeId: by.id,
+                          employeeName: by.name,
+                          reason,
+                      },
                   }
                 : {}),
             cancellationLog: (b.cancellationLog || []).concat([entry]),
@@ -489,11 +522,16 @@ const Refunds = (() => {
         wrap.className = 'mback';
         wrap.setAttribute('data-modal', '');
         wrap.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt"><h2 id="mt">${rejecting ? 'Reject this booking?' : 'Cancel this booking?'}</h2>
-   <p class="hint">${emp ? `You are ${rejecting ? 'rejecting' : 'cancelling'} on behalf of the customer. A reason is required. The refund is calculated below.` : 'Please check the refund below before you confirm. This cannot be undone.'}</p>
+   <p class="hint">${rejecting ? 'Confirm that you want to reject this booking. Enter a reason for the customer before confirming; this action cannot be undone.' : emp ? 'You are cancelling on behalf of the customer. A reason is required. The refund is calculated below.' : 'Please check the refund below before you confirm. This cannot be undone.'}</p>
    <dl class="mrows" id="mrows"></dl>
-   <div class="fld"><label for="mreason">${rejecting ? 'Rejection reason' : 'Cancellation reason'}${emp ? ' (required)' : ' (optional)'}</label><textarea id="mreason" rows="3" maxlength="300" placeholder="${emp ? `Why is this booking being ${rejecting ? 'rejected' : 'cancelled'}?` : 'Tell us why you are cancelling (optional)'}"></textarea></div>
    ${
-       emp
+       rejecting
+           ? `<div class="fld"><label for="mrejectreason">Suggested rejection reasons</label><select id="mrejectreason"><option value="">Choose a reason or enter a custom one</option><option>Vehicle unavailable for selected dates.</option><option>Incomplete booking information.</option><option>Driver eligibility requirements not met.</option><option>Required documents not provided.</option><option>Duplicate or overlapping booking detected.</option><option>Payment verification failed.</option><option value="other">Other (custom reason)</option></select></div>`
+           : ''
+   }
+   <div class="fld"><label for="mreason">${rejecting ? 'Reason for Rejection' : 'Cancellation reason'}${emp ? ' (required)' : ' (optional)'}</label><textarea id="mreason" rows="3" maxlength="300"${rejecting ? ' required aria-describedby="merr"' : ''} placeholder="${rejecting ? 'Explain why this booking is being rejected' : emp ? 'Why is this booking being cancelled?' : 'Tell us why you are cancelling (optional)'}"></textarea></div>
+   ${
+       emp && !rejecting
            ? `<div class="fld"><label for="mcat">Why is the booking being ${rejecting ? 'rejected' : 'cancelled'}?</label><select id="mcat">${Object.entries(
                  CATS,
              )
@@ -505,7 +543,7 @@ const Refunds = (() => {
            : ''
    }
    <p class="err" id="merr" role="alert"></p>
-   <div class="macts"><button type="button" class="act" id="mkeep">Keep Booking</button><button type="button" class="act red done" id="mgo">Confirm Cancellation</button></div></div>`;
+   <div class="macts"><button type="button" class="act" id="mkeep">${rejecting ? 'Cancel' : 'Keep Booking'}</button><button type="button" class="act red done" id="mgo">${rejecting ? 'Confirm Reject' : 'Confirm Cancellation'}</button></div></div>`;
         document.body.append(wrap);
         const $ = (s) => wrap.querySelector(s),
             close = () => {
@@ -528,7 +566,7 @@ const Refunds = (() => {
                     ? row('Refund Method', E(METHOD)) +
                       row('Payment Card', '\u2022\u2022\u2022\u2022 ' + E(q.card4))
                     : row('Refund Method', 'No refund due')) +
-                `<p class="mnote">${E(q.note)}${q.refund > 0 ? ' The refund goes back to the original payment method within 5 to 10 business days.' : ''}</p>`;
+                `<p class="mnote">${E(rejecting ? 'The refund shown is calculated for this booking rejection.' : q.note)}${q.refund > 0 ? ' The refund goes back to the original payment method within 5 to 10 business days.' : ''}</p>`;
         };
         const key = (e) => {
             if (e.key === 'Escape') close();
@@ -553,7 +591,13 @@ const Refunds = (() => {
         $('#mreason').addEventListener('input', () => {
             $('#merr').textContent = '';
         });
-        $('#mgo').textContent = rejecting ? 'Confirm Rejection' : 'Confirm Cancellation';
+        if ($('#mrejectreason'))
+            $('#mrejectreason').addEventListener('change', () => {
+                if ($('#mrejectreason').value && $('#mrejectreason').value !== 'other')
+                    $('#mreason').value = $('#mrejectreason').value;
+                else if ($('#mrejectreason').value === 'other') $('#mreason').value = '';
+                $('#merr').textContent = '';
+            });
         $('#mgo').addEventListener('click', () => {
             try {
                 const res = cancel(b.id, actorEmail, $('#mreason').value, {
@@ -562,7 +606,7 @@ const Refunds = (() => {
                 });
                 close();
                 A.toast(
-                    `${rejecting ? `Booking ${b.id} was rejected.` : emp ? `Booking ${b.id} cancelled.` : 'Your previous booking was cancelled. You may create a new booking.'} ${res.quote.note} ` +
+                    `${rejecting ? `Booking ${b.id} was rejected.` : emp ? `Booking ${b.id} cancelled.` : 'Your previous booking was cancelled. You may create a new booking.'} ${rejecting ? 'The refund was calculated for this booking rejection.' : res.quote.note} ` +
                         (res.refund.refundAmount > 0
                             ? `${money(res.refund.refundAmount)} refunded to the original payment method (${res.refund.ref}).`
                             : 'No refund is due.') +

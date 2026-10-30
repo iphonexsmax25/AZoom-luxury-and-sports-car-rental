@@ -254,6 +254,15 @@ const History = (() => {
             (b.status === 'cancelled' ? g('Cancelled at', dt(b.cancelledAt)) : '') +
             (b.status === 'rejected'
                 ? g('Rejected at', dt(b.rejectedAt || b.cancelledAt)) +
+                  (emp
+                      ? g(
+                            'Rejected by',
+                            (b.rejectedByName || b.cancelledByName || '-') +
+                                ' (' +
+                                (b.rejectedBy || b.cancelledById || '-') +
+                                ')',
+                        )
+                      : '') +
                   g(
                       'Rejection reason',
                       b.rejectionReason || b.cancellationReason || 'Not recorded',
@@ -347,15 +356,19 @@ const History = (() => {
             g('Refund Reference Number', r.ref || '-') +
             g(
                 b.status === 'rejected' ? 'Rejected because' : 'Cancelled because',
-                Refunds.CATS[b.cancellationCategory || r.category || 'customer'] ||
-                    'Customer Request',
+                b.status === 'rejected'
+                    ? 'Employee rejection'
+                    : Refunds.CATS[b.cancellationCategory || r.category || 'customer'] ||
+                          'Customer Request',
             ) +
             (emp
                 ? g(
                       b.status === 'rejected' ? 'Rejected by' : 'Cancelled by',
                       (b.rejectedByName || b.cancelledByName || r.cancelledByName || '-') +
                           ' (' +
-                          (b.cancelledBy || r.cancelledBy || '-') +
+                          (b.status === 'rejected'
+                              ? b.rejectedBy || b.cancelledById || r.cancelledById || '-'
+                              : b.cancelledBy || r.cancelledBy || '-') +
                           ')',
                   )
                 : '')
@@ -422,12 +435,16 @@ const History = (() => {
                     : b.status === 'rejected'
                       ? 'Your booking was rejected. You may create a new booking for the same or different dates.'
                       : '';
+        const rejectionReason =
+            b.status === 'rejected'
+                ? b.rejectionReason || b.cancellationReason || 'No reason was recorded.'
+                : '';
         const rent = m.c
             ? `<a class="act" href="../payment/payment.html?${new URLSearchParams({ car: b.carId, pk: b.pickup, rt: b.ret })}">Rent Again</a>`
             : '';
         return `<article class="bk hist" data-hb="${E(b.id)}"><div class="bkimg" style="background:linear-gradient(135deg,${c.c},#0b0b0e)"><em>${E(String(c.mk).split('-')[0])}</em>${typeof bookingImg === 'function' ? bookingImg(c) : ''}</div>
   <div class="bkbody"><div class="bktop"><div>${statusPill(b)}<small>${E(c.mk)}</small><h3>${E(c.n)}</h3><small>Plate ${E(m.plate)}</small></div><div class="bkprice"><b>${M(m.total)}</b><small>total rental cost</small></div></div>
-  ${statusNote ? `<p class="hint">${statusNote}</p>` : ''}<div class="bkmeta">${
+  ${statusNote ? `<p class="hint">${statusNote}</p>` : ''}${rejectionReason ? `<div class="rejection-note"><b>Reason for Rejection</b><p>${E(rejectionReason)}</p></div>` : ''}<div class="bkmeta">${
       g('Booking ID', b.id) +
       g('Booking Date', dt(b.created)) +
       g('Pick-up Date & Time', m.pickup) +
@@ -777,10 +794,19 @@ const History = (() => {
             o.push(
                 '',
                 '-'.repeat(60),
-                'CANCELLATION & REFUND',
+                b.status === 'rejected' ? 'BOOKING REJECTION & REFUND' : 'CANCELLATION & REFUND',
                 '',
-                row('Cancellation Date:', A.stamp(b.cancelledAt || r.cancelledAt)),
-                row('Cancellation Reason:', b.cancellationReason || r.reason || 'Not recorded'),
+                row(
+                    b.status === 'rejected' ? 'Rejection Date:' : 'Cancellation Date:',
+                    A.stamp(b.rejectedAt || b.cancelledAt || r.cancelledAt),
+                ),
+                row(
+                    b.status === 'rejected' ? 'Rejection Reason:' : 'Cancellation Reason:',
+                    b.rejectionReason ||
+                        b.cancellationReason ||
+                        r.reason ||
+                        'Not recorded',
+                ),
                 row('Rental Amount:', M(r.rentalAmount)),
                 row('Cancellation Fee:', M(r.cancellationFee)),
                 row('Refund Amount:', M(r.refundAmount)),
