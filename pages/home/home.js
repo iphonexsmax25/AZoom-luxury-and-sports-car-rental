@@ -48,7 +48,7 @@ CarsData.ready.then(() => {
 <article class="card"><div class="pic" style="background:linear-gradient(135deg,${c.c},#0b0b0e)">
  <em>${c.mk.split('-')[0]}</em>${carImg(c)}
  <div class="pic-top"><span class="tag">${c.t}</span>${Reviews.badge(i)}</div>
- <div class="pic-btns">${Reviews.btn(i)}<button type="button" class="cmp" data-id="${i}" aria-pressed="${Compare.has(i)}">${Compare.has(i) ? 'Comparing' : 'Compare'}</button></div></div>
+ </div><div class="pic-btns">${Reviews.btn(i)}<button type="button" class="cmp" data-id="${i}" aria-pressed="${Compare.has(i)}">${Compare.has(i) ? 'Comparing' : 'Compare'}</button></div>
  <div class="body"><small>${c.mk}</small><h3>${c.n}</h3>
  <div class="spec"><div>${c.hp}<span>HP</span></div><div>${c.s}<span>SEATS</span></div><div>${c.tr === 'Auto' ? 'Automatic' : c.tr}<span>TRANS</span></div><div>Petrol<span>FUEL</span></div></div>
  <div class="price"><div><b>S$${c.p.toLocaleString()}</b> <small>/day</small></div><a class="btn" href="../car/car.html?model=${encodeURIComponent(carKey(c))}">View <span class="arr">&rarr;</span></a></div>${RentalDiscounts.cardMarkup(c)}</div></article>`,

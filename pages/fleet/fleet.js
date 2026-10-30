@@ -115,7 +115,7 @@ CarsData.ready.then(() => {
 <article class="card"><div class="pic" style="background:linear-gradient(135deg,${c.c},#0b0b0e)">
  <em>${c.mk.split('-')[0]}</em>${carImg(c)}
  <div class="pic-top"><span class="tag">${c.t}</span>${Reviews.badge(c.id)}</div>
- <div class="pic-btns">${Reviews.btn(c.id)}<button type="button" class="cmp" data-id="${c.id}" aria-pressed="${Compare.has(c.id)}">${Compare.has(c.id) ? 'Comparing' : 'Compare'}</button></div></div>
+ </div><div class="pic-btns">${Reviews.btn(c.id)}<button type="button" class="cmp" data-id="${c.id}" aria-pressed="${Compare.has(c.id)}">${Compare.has(c.id) ? 'Comparing' : 'Compare'}</button></div>
  <div class="body"><small>${c.mk} · ${c.ty}</small><h3>${c.n}</h3>
  ${c.d ? `<p class="cdesc">${c.d}</p>` : ''}<div class="avail ${busy.has(c.id) ? 'out' : 'in'}">${busy.has(c.id) ? 'Currently rented' : 'Available now'}</div>
  <div class="spec"><div>${c.hp}<span>HP</span></div><div>${c.s}<span>SEATS</span></div><div class="transmission-spec">${c.tr === 'Auto' ? 'Auto' : c.tr}<span>TRANS</span></div><div>${FUEL[c.f]}<span>FUEL</span></div></div>

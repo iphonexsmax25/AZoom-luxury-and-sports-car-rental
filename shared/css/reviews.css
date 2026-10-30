@@ -112,12 +112,11 @@ body.rv-lock {
 }
 /* Reviews + Compare: share the width evenly, same height, one row, text never wraps */
 .pic-btns {
-    left: 12px;
-    right: 12px;
     display: flex;
     flex-wrap: nowrap;
-    align-items: stretch;
+    align-items: center;
     gap: 8px;
+    margin: 10px 12px 0;
 }
 .pic-btns .rvbtn,
 .pic-btns .cmp {
@@ -145,15 +144,6 @@ body.rv-lock {
 }
 .card:hover .rvbadge:hover {
     background: var(--red);
-}
-.pic-btns {
-    position: absolute;
-    right: 12px;
-    bottom: 12px;
-    z-index: 1;
-    display: flex;
-    gap: 8px;
-    align-items: center;
 }
 .pic-btns .cmp {
     position: static;

@@ -83,7 +83,8 @@ CarsData.ready.then(function () {
                     return `<article class="cc"><div class="ccimg" style="background:linear-gradient(135deg,${c.c},#0b0b0e)">
     <em>${c.mk.split('-')[0]}</em>${carImg(c)}
     <button type="button" class="rm" data-rm="${id}" aria-label="Remove ${c.mk} ${c.n} from comparison">&times;</button></div>
-    <div class="in"><small>${c.mk}</small><h3>${c.n}</h3>
+                    <div class="pic-btns">${Reviews.btn(id)}<button type="button" class="cmp" data-id="${id}" aria-pressed="${Compare.has(id)}">${Compare.has(id) ? 'Comparing' : 'Compare'}</button></div>
+                    <div class="in"><small>${c.mk}</small><h3>${c.n}</h3>
     <div class="hl">${ROWS.map((r, i) => (best[i] !== null && +c[r[2]] === best[i] ? `<span>${HL[r[2]]}</span>` : '')).join('')}</div>
     ${ROWS.map((r, i) => `<div class="crow"><span>${r[0]}</span><b${best[i] !== null && +c[r[2]] === best[i] ? ' class="best"' : ''}>${r[1](c)}</b></div>`).join('')}
     <div class="feats"><p>Features</p><div class="chips">${c.ft.map((f) => `<span>${f}</span>`).join('')}</div></div></div></article>`;

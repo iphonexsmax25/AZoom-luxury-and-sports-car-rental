@@ -260,6 +260,9 @@ body.noscroll {
     height: 190px;
     overflow: hidden;
 }
+.cc .pic-btns {
+    margin-top: 10px;
+}
 .thumb img,
 .ccimg img {
     position: absolute;
