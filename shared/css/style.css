@@ -262,6 +262,13 @@ footer .logo img {
         left: -75%;
         transition: none;
     }
+    .hero .cta .btn:not(.red) {
+        transition: none;
+    }
+    .hero .cta .btn:not(.red):hover,
+    .hero .cta .btn:not(.red):focus-visible {
+        transform: none;
+    }
 }
 
 /* HERO */
@@ -326,6 +333,22 @@ footer .logo img {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
+}
+.hero .cta .btn:not(.red) {
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+.hero .cta .btn:not(.red):hover,
+.hero .cta .btn:not(.red):focus-visible {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(225, 29, 46, 0.4);
+    transform: translateY(-2px);
 }
 .note {
     margin-top: 20px;
