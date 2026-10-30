@@ -577,8 +577,7 @@ const History = (() => {
             id = E(b.id),
             m = model(b),
             session = A.user(),
-            selfRental = emp && session && A.isSelfBooking(b, session.email),
-            disabledTitle = selfRental ? ` disabled title="${E(F.SELF_RENTAL_TOOLTIP)}"` : '';
+            selfRental = emp && session && A.isSelfBooking(b, session.email);
         const payDate = s.lastPaymentAt
             ? dt(s.lastPaymentAt)
             : s.status === 'waived'
@@ -589,18 +588,23 @@ const History = (() => {
             acts += `<button type="button" class="act" data-hpr="${id}">Download Penalty Receipt</button>`;
         if (m.ins)
             acts += `<button type="button" class="act" data-${emp ? 'dl' : 'hinsp'}="${id}">${emp ? 'Download Latest Inspection Report (.txt)' : 'Download Inspection Report'}</button>`;
-        if (emp) {
+        if (emp && selfRental) {
+            if (s.outstanding > 0)
+                acts =
+                    `<a class="act red" href="../damage-payment/damage-payment.html?id=${encodeURIComponent(b.id)}">${s.paid > 0 ? 'Pay Remaining Balance' : 'Pay Now'}</a>` +
+                    acts;
+        } else if (emp) {
             if (s.status === 'waived')
                 acts =
-                    `<button type="button" class="act" data-pa="reinstate" data-id="${id}"${disabledTitle}>Reinstate Penalty</button>` +
+                    `<button type="button" class="act" data-pa="reinstate" data-id="${id}">Reinstate Penalty</button>` +
                     acts;
             else {
                 if (s.outstanding > 0)
                     acts =
-                        `<button type="button" class="act red" data-pa="pay" data-id="${id}"${disabledTitle}>Record Payment</button><button type="button" class="act warn" data-pa="waive" data-id="${id}"${disabledTitle}>Waive Penalty</button>` +
+                        `<button type="button" class="act red" data-pa="pay" data-id="${id}">Record Payment</button><button type="button" class="act warn" data-pa="waive" data-id="${id}">Waive Penalty</button>` +
                         acts;
                 acts =
-                    `<button type="button" class="act" data-pa="issue" data-id="${id}"${disabledTitle}>Add Penalty</button>` +
+                    `<button type="button" class="act" data-pa="issue" data-id="${id}">Add Penalty</button>` +
                     acts;
             }
         } else if (s.outstanding > 0)

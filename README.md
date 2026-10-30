@@ -10,7 +10,7 @@
 
 AZoom is a luxury and sports car rental website designed for customers to browse available vehicles, view car specifications, compare models, make bookings, manage payments, and check their booking history. Customers can also access rental policies, branch information, reviews, and account settings.
 
-The website includes an employee portal for managing active bookings, vehicle returns, inspections, penalty fees, payment status, and customer records. Vehicle information is loaded from `data/cars.json`, while account, booking, payment, review, and inspection data is stored in the browser's local storage for demonstration and testing.
+The website includes an employee portal for managing active bookings, vehicle returns, inspections, penalty fees, payment status, and customer records. Employees remain responsible for penalties on their own rentals and can pay them through the customer payment flow, but cannot administer those penalties themselves. Vehicle information is loaded from `data/cars.json`, while account, booking, payment, review, and inspection data is stored in the browser's local storage for demonstration and testing.
 
 ## How to run
 

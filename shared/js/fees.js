@@ -15,7 +15,7 @@ const Fees = (() => {
         KEY = A.K.f || 'az_fees',
         DENIED_KEY = 'az_penalty_access_denied',
         SELF_RENTAL_MESSAGE =
-            'You cannot manage penalties for your own rental booking. Another employee must process this penalty for audit and compliance purposes.',
+            'You cannot waive, modify, refund, or manage penalties issued for your own rental booking. However, you remain responsible for paying all valid penalties associated with your rental. Any adjustment or review must be handled by another authorized employee for audit and compliance purposes.',
         SELF_RENTAL_TOOLTIP = 'Self-rental penalties must be handled by another employee.';
     const rd = (k, d) => {
         try {
@@ -429,14 +429,6 @@ const Fees = (() => {
         if (!b || b.email !== payerEmail)
             throw Error('This Penalty Fee belongs to another account.');
         const session = A.user();
-        if (
-            session &&
-            session.role === 'employee' &&
-            A.isSelfBooking(b, session.email)
-        ) {
-            auditDenied(b, session.email, 'pay a Penalty Fee online');
-            throw Error(SELF_RENTAL_MESSAGE);
-        }
         if (!session || session.email !== payerEmail)
             throw Error('Please sign in to the customer account linked to this Penalty Fee.');
         const s = summarise(f),
@@ -465,7 +457,7 @@ const Fees = (() => {
         log(
             f,
             by,
-            'Customer payment',
+            session.role === 'employee' ? 'Employee self-rental payment' : 'Customer payment',
             `${money(amt)} received (receipt ${p.receipt}, card \u2022\u2022\u2022\u2022 ${p.card4 || '----'}). Outstanding balance ${money(p.balanceAfter)}.`,
         );
         const after = statusOf(f);

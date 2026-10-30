@@ -9,7 +9,9 @@ CarsData.ready.then(function () {
     if (!u) return;
     const id = new URLSearchParams(location.search).get('id');
     const mine = () => A.bookings().find((x) => x.id === id && x.email === u.email);
-    const back = `<a class="back" href="../dashboard/dashboard.html">${A.ic('back', 16)} Back to dashboard</a>`;
+    const employee = u.role === 'employee',
+        portal = employee ? '../employee/employee.html' : '../dashboard/dashboard.html',
+        back = `<a class="back" href="${portal}">${A.ic('back', 16)} Back to ${employee ? 'employee portal' : 'dashboard'}</a>`;
     let b = mine(),
         s = b ? Fees.forBooking(id) : null;
     if (!b || !s || !(s.total > 0)) {
@@ -34,9 +36,29 @@ CarsData.ready.then(function () {
     <div class="ctot"><span>Amount paid now</span><b>${Fees.money(p.amount)}</b></div>
     <div class="ctot"><span>Outstanding balance</span><b>${Fees.money(s.outstanding)}</b></div></div>
    ${done ? '' : `<a class="btn red" href="../damage-payment/damage-payment.html?id=${encodeURIComponent(id)}">Pay Remaining Balance</a>`}
-   <a class="btn ${done ? 'red' : 'ghost'}" href="../dashboard/dashboard.html">Back to My Dashboard</a>
+   <a class="btn ${done ? 'red' : 'ghost'}" href="${portal}">Back to ${employee ? 'Employee Portal' : 'My Dashboard'}</a>
+   ${employee ? `<button type="button" class="btn ghost" id="download-receipt">${A.ic('doc', 16)} Download Receipt (.txt)</button>` : ''}
    <button type="button" class="btn ghost" id="prt">${A.ic('print', 16)} Print Receipt</button></div></div>`;
         document.getElementById('prt').addEventListener('click', () => print());
+        const download = document.getElementById('download-receipt');
+        if (download)
+            download.addEventListener('click', () => {
+                try {
+                    const text = Fees.penaltyReceiptText(id, u.email, p.id),
+                        url = URL.createObjectURL(
+                            new Blob([text], { type: 'text/plain;charset=utf-8' }),
+                        ),
+                        a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Penalty_Receipt_${id}_${p.receipt || p.id}.txt`;
+                    document.body.append(a);
+                    a.click();
+                    a.remove();
+                    setTimeout(() => URL.revokeObjectURL(url), 2000);
+                } catch (x) {
+                    A.toast(x.message, 'err');
+                }
+            });
     }
     /* fully paid already: show the payments */
     if (s.outstanding <= 0) {
