@@ -575,7 +575,10 @@ const History = (() => {
             b = r.b,
             emp = mode === 'emp',
             id = E(b.id),
-            m = model(b);
+            m = model(b),
+            session = A.user(),
+            selfRental = emp && session && A.isSelfBooking(b, session.email),
+            disabledTitle = selfRental ? ` disabled title="${E(F.SELF_RENTAL_TOOLTIP)}"` : '';
         const payDate = s.lastPaymentAt
             ? dt(s.lastPaymentAt)
             : s.status === 'waived'
@@ -589,15 +592,15 @@ const History = (() => {
         if (emp) {
             if (s.status === 'waived')
                 acts =
-                    `<button type="button" class="act" data-pa="reinstate" data-id="${id}">Reinstate Penalty</button>` +
+                    `<button type="button" class="act" data-pa="reinstate" data-id="${id}"${disabledTitle}>Reinstate Penalty</button>` +
                     acts;
             else {
                 if (s.outstanding > 0)
                     acts =
-                        `<button type="button" class="act red" data-pa="pay" data-id="${id}">Record Payment</button><button type="button" class="act warn" data-pa="waive" data-id="${id}">Waive Penalty</button>` +
+                        `<button type="button" class="act red" data-pa="pay" data-id="${id}"${disabledTitle}>Record Payment</button><button type="button" class="act warn" data-pa="waive" data-id="${id}"${disabledTitle}>Waive Penalty</button>` +
                         acts;
                 acts =
-                    `<button type="button" class="act" data-pa="issue" data-id="${id}">Add Penalty</button>` +
+                    `<button type="button" class="act" data-pa="issue" data-id="${id}"${disabledTitle}>Add Penalty</button>` +
                     acts;
             }
         } else if (s.outstanding > 0)
@@ -622,6 +625,7 @@ const History = (() => {
    }</div>
    <div class="pfb"><b style="font-size:12px;letter-spacing:.08em;color:var(--mute);text-transform:uppercase">Penalty breakdown</b><div class="pigrid" style="margin-top:8px">${g('Damage Cost', M(s.damage)) + g('Cleaning Fee', M(s.cleaning)) + g('Traffic Fine', M(s.traffic)) + g('Late Return Fee', M(s.late))}</div></div>
    ${s.waiver ? `<p class="hint">Waived ${M(s.waivedAmount)} on ${E(dt(s.waiver.at))} by ${E(s.waiver.byName)}. Reason: ${E(s.waiver.reason)}</p>` : ''}
+   ${selfRental ? `<p class="self-penalty-notice" role="note">${E(F.SELF_RENTAL_MESSAGE)}</p>` : ''}
    ${s.overdue ? `<p class="odmsg" role="alert">${A.ic('warn', 16)} ${E(F.OVERDUE_MSG)}</p>` : ''}
    <div class="acts">${acts}</div>${open ? penaltyDetail(r, mode) : ''}</article>`;
     }

@@ -460,11 +460,11 @@
                   `<button type="button" class="act red" data-rf="done" data-id="${A.esc(b.id)}">Mark Refund Paid</button>`
                 : '';
         const canIssue =
-            (b.status === 'completed' || b.status === 'awaiting_inspection') &&
-            !A.isSelfBooking(b, u.email);
+            b.status === 'completed' || b.status === 'awaiting_inspection',
+            selfRental = A.isSelfBooking(b, u.email);
         return (
             (canIssue
-                ? `<button type="button" class="act" data-pa="issue" data-id="${A.esc(b.id)}">Issue Penalty</button>`
+                ? `<button type="button" class="act" data-pa="issue" data-id="${A.esc(b.id)}"${selfRental ? ` disabled title="${A.esc(Fees.SELF_RENTAL_TOOLTIP)}"` : ''}>Issue Penalty</button>`
                 : '') +
             (canCancel
                 ? `<button type="button" class="act warn" data-st="${b.status === 'pending' ? 'rejected' : 'cancelled'}" data-id="${A.esc(b.id)}">${b.status === 'pending' ? 'Reject Booking' : 'Cancel Booking'}</button>`
@@ -492,10 +492,11 @@
             f = s.fee;
         if (!f)
             return `<div class="hpanel"><div class="hphead"><b>Payment History</b>${Fees.badge('none')}</div><p class="hint">No Penalty Fee was created for this booking, so there are no payment records.</p></div>`;
-        const inp = `<div class="duebox"><label for="due-${A.esc(b.id)}">Due date</label><input id="due-${A.esc(b.id)}" type="date" value="${A.esc(s.dueDate)}"><button type="button" class="act" data-setdue="${A.esc(b.id)}">Change due date</button></div>`;
+        const selfRental = A.isSelfBooking(b, u.email),
+            inp = `<div class="duebox"><label for="due-${A.esc(b.id)}">Due date</label><input id="due-${A.esc(b.id)}" type="date" value="${A.esc(s.dueDate)}"${selfRental ? ` disabled title="${A.esc(Fees.SELF_RENTAL_TOOLTIP)}"` : ''}><button type="button" class="act" data-setdue="${A.esc(b.id)}"${selfRental ? ` disabled title="${A.esc(Fees.SELF_RENTAL_TOOLTIP)}"` : ''}>Change due date</button></div>`;
         return `<div class="hpanel"><div class="hphead"><b>Payment History</b>${Fees.badge(s.status)}</div>
    <div class="pigrid">${m('Inspection Report Reference', s.ref || '-') + m('Total Additional Charges', Fees.money(s.total)) + m('Damage Fee', Fees.money(s.damage)) + m('Cleaning Fee', Fees.money(s.cleaning)) + m('Traffic Fine', Fees.money(s.traffic)) + m('Late Return Fee', Fees.money(s.late)) + m('Fuel Penalty Fee', Fees.money(s.fuelPenalty)) + m('Battery Penalty Fee', Fees.money(s.batteryPenalty)) + m('Amount Paid', Fees.money(s.paid)) + m('Outstanding Balance', Fees.money(s.outstanding)) + m('Due date', s.dueDate) + m('Last payment', s.lastPaymentAt ? A.stamp(s.lastPaymentAt).slice(0, 16) : 'No payment yet') + m('Payment completed', s.completedAt ? A.stamp(s.completedAt).slice(0, 16) : 'Not yet')}</div>
-   ${s.overdue ? `<p class="odmsg" role="alert">${A.ic('warn', 16)} ${A.esc(Fees.OVERDUE_MSG)}</p>` : ''}${s.outstanding > 0 ? inp : ''}
+   ${selfRental ? `<p class="self-penalty-notice" role="note">${A.esc(Fees.SELF_RENTAL_MESSAGE)}</p>` : ''}${s.overdue ? `<p class="odmsg" role="alert">${A.ic('warn', 16)} ${A.esc(Fees.OVERDUE_MSG)}</p>` : ''}${s.outstanding > 0 ? inp : ''}
    <h4>Penalty Fee items</h4>${rowsOf(f.charges || [], (c) => `<li><span>${A.esc(Fees.TYPES[c.type] || c.label)}</span><b>${Fees.money(c.amount)}</b><small>Date Applied: ${A.esc(A.stamp(c.at).slice(0, 16))} \u00b7 Staff Member: ${A.esc(c.byName || '-')} (${A.esc(c.byId || '-')})${c.note ? ' \u00b7 Reason: ' + A.esc(c.note) : ''}</small></li>`)}
    <h4>Customer payments</h4>${rowsOf(f.payments || [], (p) => `<li><span>${A.esc(A.stamp(p.at).slice(0, 16))} \u00b7 receipt ${A.esc(p.receipt || '-')} \u00b7 card \u2022\u2022\u2022\u2022 ${A.esc(p.card4 || '----')}</span><b>${Fees.money(p.amount)}</b><small>Balance after: ${Fees.money(p.balanceAfter || 0)}</small></li>`)}
    <h4>Audit trail</h4><p class="hint">Fee created by ${A.esc(f.createdByName || '-')} (${A.esc(f.createdBy || '-')}) \u00b7 Inspection by ${A.esc(f.inspectedByName || '-')} (${A.esc(f.inspectedBy || '-')}) \u00b7 Created ${A.esc(A.stamp(f.createdAt).slice(0, 16))}</p>
@@ -506,12 +507,38 @@
     function feesPane(match) {
         const rows = History.penaltyRows(null).filter((r) => match(r.b)),
             sum = (k) => rows.reduce((t, r) => t + r.s[k], 0),
-            od = rows.filter((r) => r.s.overdue);
+            od = rows.filter((r) => r.s.overdue),
+            returned = (b) =>
+                b.status === 'completed' || b.status === 'awaiting_inspection',
+            canIssue = A.bookings().some(
+                (b) => returned(b) && !A.isSelfBooking(b, u.email),
+            ),
+            hasSelfRental = A.bookings().some(
+                (b) => returned(b) && A.isSelfBooking(b, u.email),
+            ),
+            issueTitle = !canIssue
+                ? ' disabled title="' +
+                  A.esc(
+                      hasSelfRental
+                          ? Fees.SELF_RENTAL_TOOLTIP
+                          : 'No returned bookings are available for a new penalty.',
+                  ) +
+                  '"'
+                : '',
+            denied = Fees.deniedAttempts().slice().reverse();
         return (
-            `<div class="hphead"><h2 class="sec" style="margin:0">Penalty Fees</h2><div class="acts"><button type="button" class="act red" data-pa="issue" data-id="">Issue Penalty</button></div></div>
+            `<div class="hphead"><h2 class="sec" style="margin:0">Penalty Fees</h2><div class="acts"><button type="button" class="act red" data-pa="issue" data-id=""${issueTitle}>Issue Penalty</button></div></div>
    <div class="kpis">${kpi('', 'clip', 'Total Penalty Fees', Fees.money(sum('total'))) + kpi('k2', 'check', 'Collected', Fees.money(sum('paid'))) + kpi('k4', 'card', 'Outstanding', Fees.money(sum('outstanding'))) + kpi('k3', 'warn', 'Overdue', od.length + ' \u00b7 ' + Fees.money(od.reduce((t, r) => t + r.s.outstanding, 0)))}</div>
    ${od.length ? `<div class="odbar" role="alert">${A.ic('warn', 18)}<div><b>${od.length} overdue Penalty Fee${od.length > 1 ? 's' : ''}</b><small>${A.esc(Fees.OVERDUE_MSG)}</small></div></div>` : ''}` +
-            History.penaltySection(rows, hist, 'emp')
+            History.penaltySection(rows, hist, 'emp') +
+            (denied.length
+                ? `<div class="hpanel"><div class="hphead"><b>Denied Self-Rental Penalty Attempts</b><small>Audit trail</small></div><ul class="hlist">${denied
+                      .map(
+                          (entry) =>
+                              `<li><span>${A.esc(entry.actionAttempted)} · Booking ${A.esc(entry.bookingId)} · Customer Account ${A.esc(entry.customerAccountId)}</span><small>${A.esc(entry.dateTime)} · Employee ${A.esc(entry.employeeId)} · Access denied: ${A.esc(entry.accessDeniedReason)}</small></li>`,
+                      )
+                      .join('')}</ul></div>`
+                : '')
         );
     }
 

@@ -664,6 +664,14 @@
     cursor: not-allowed;
     transform: none;
 }
+.self-penalty-notice {
+    padding: 12px 14px;
+    border: 1px solid rgba(212, 169, 90, 0.35);
+    border-radius: 10px;
+    background: rgba(212, 169, 90, 0.08);
+    color: #e5c27e;
+    font-size: 13px;
+}
 .act.done {
     padding: 10px 18px;
     font-size: 13px;

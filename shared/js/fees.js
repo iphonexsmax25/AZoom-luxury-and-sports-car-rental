@@ -12,7 +12,11 @@
    - Fees.reportText() re-reads bookings, inspections and fees from localStorage at the moment of the download, so the file is never stale. */
 const Fees = (() => {
     const A = Auth,
-        KEY = A.K.f || 'az_fees';
+        KEY = A.K.f || 'az_fees',
+        DENIED_KEY = 'az_penalty_access_denied',
+        SELF_RENTAL_MESSAGE =
+            'You cannot manage penalties for your own rental booking. Another employee must process this penalty for audit and compliance purposes.',
+        SELF_RENTAL_TOOLTIP = 'Self-rental penalties must be handled by another employee.';
     const rd = (k, d) => {
         try {
             const v = JSON.parse(localStorage.getItem(k));
@@ -309,10 +313,51 @@ const Fees = (() => {
         });
     }
     const actor = (email) => (email ? { id: A.uid(email), name: A.nameOf(email), email } : null);
+    function auditDenied(booking, employeeEmail, action) {
+        const at = Date.now();
+        const record = {
+            employeeId: A.uid(employeeEmail),
+            bookingId: booking.id,
+            customerAccountId: A.uid(booking.email),
+            actionAttempted: action,
+            at,
+            dateTime: A.stamp(at),
+            accessDeniedReason: SELF_RENTAL_MESSAGE,
+        };
+        let audit;
+        try {
+            audit = JSON.parse(localStorage.getItem(DENIED_KEY) || '[]');
+            if (!Array.isArray(audit)) throw Error('The access-denial audit is not an array.');
+        } catch (e) {
+            console.error('Could not read the penalty access-denial audit.', e);
+            audit = [];
+        }
+        audit.push(record);
+        try {
+            localStorage.setItem(DENIED_KEY, JSON.stringify(audit));
+        } catch (e) {
+            console.error('Could not persist the penalty access-denial audit.', e);
+        }
+        const fees = all(),
+            f = fees.find((x) => x.bookingId === booking.id);
+        if (f) {
+            log(
+                f,
+                actor(employeeEmail),
+                'Access denied',
+                `${action} denied for employee-owned rental. ${SELF_RENTAL_MESSAGE}`,
+            );
+            save(fees);
+        }
+    }
 
     /* ---------- Create a fee (called when an inspection finds charges) ----------
     input: {bookingId, inspectionId, reportRef, inspectorEmail, creatorEmail, charges:[{type,amount,note}], dueDate} */
     function create(inp) {
+        const session = A.user(),
+            creatorEmail =
+                inp.creatorEmail || inp.inspectorEmail || (session && session.email);
+        guardEmp(inp.bookingId, creatorEmail, 'issue a Penalty Fee');
         const lines = (inp.charges || [])
             .filter((c) => TYPES[c.type])
             .map((c) => ({
@@ -326,7 +371,7 @@ const Fees = (() => {
         const a = all();
         if (a.some((x) => x.bookingId === inp.bookingId))
             throw Error('A fee record already exists for booking ' + inp.bookingId + '.');
-        const by = actor(inp.creatorEmail || inp.inspectorEmail),
+        const by = actor(creatorEmail),
             insp = actor(inp.inspectorEmail),
             now = Date.now();
         const f = {
@@ -383,6 +428,17 @@ const Fees = (() => {
         const b = A.bookings().find((x) => x.id === bookingId);
         if (!b || b.email !== payerEmail)
             throw Error('This Penalty Fee belongs to another account.');
+        const session = A.user();
+        if (
+            session &&
+            session.role === 'employee' &&
+            A.isSelfBooking(b, session.email)
+        ) {
+            auditDenied(b, session.email, 'pay a Penalty Fee online');
+            throw Error(SELF_RENTAL_MESSAGE);
+        }
+        if (!session || session.email !== payerEmail)
+            throw Error('Please sign in to the customer account linked to this Penalty Fee.');
         const s = summarise(f),
             amt = r2(amount);
         if (!(amt > 0)) throw Error('Enter an amount greater than S$0.00.');
@@ -428,15 +484,22 @@ const Fees = (() => {
     /* ---------- Employee penalty actions. Every one is logged in the fee's audit trail. ---------- */
     const METHODS = ['Cash at counter', 'Card at counter', 'Bank transfer'];
     const guardEmp = (bookingId, email, what) => {
-        if (!A.isEmployee(email)) throw Error('Only employee accounts can ' + what + '.');
         const b = A.bookings().find((x) => x.id === bookingId);
         if (!b) throw Error('Booking not found.');
-        if (A.isSelfBooking(b, email))
-            throw Error(
-                'You cannot ' +
-                    what +
-                    ' for a booking you made yourself. Please ask another employee.',
-            );
+        const session = A.user(),
+            sessionEmail = session && String(session.email || '').trim().toLowerCase(),
+            action = what;
+        if (session && session.role === 'employee' && A.isSelfBooking(b, sessionEmail)) {
+            auditDenied(b, sessionEmail, action);
+            throw Error(SELF_RENTAL_MESSAGE);
+        }
+        if (
+            !A.isEmployee(email) ||
+            !session ||
+            session.role !== 'employee' ||
+            sessionEmail !== String(email || '').trim().toLowerCase()
+        )
+            throw Error('Only the signed-in employee account can ' + what + '.');
         return b;
     };
     const cleanNote = (t, min, label) => {
@@ -854,10 +917,10 @@ const Fees = (() => {
     }
     /* Employee changes the due date (audited). */
     function setDueDate(bookingId, date, empEmail) {
+        guardEmp(bookingId, empEmail, 'change a Penalty Fee due date');
         const a = all(),
             f = a.find((x) => x.bookingId === bookingId);
         if (!f) throw Error('No Penalty Fee record for this booking.');
-        if (!A.isEmployee(empEmail)) throw Error('Only employee accounts can change a due date.');
         if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw Error('Enter a valid due date.');
         const old = f.dueDate;
         f.dueDate = date;
@@ -879,6 +942,16 @@ const Fees = (() => {
     /* When an account is deleted its fee records go with its bookings. */
     const removeFor = (ids) => {
         const s = new Set(ids);
+        const session = A.user();
+        if (session && session.role === 'employee') {
+            const ownBooking = A.bookings().find(
+                (b) => s.has(b.id) && A.isSelfBooking(b, session.email),
+            );
+            if (ownBooking) {
+                auditDenied(ownBooking, session.email, 'remove a Penalty Fee');
+                throw Error(SELF_RENTAL_MESSAGE);
+            }
+        }
         save(all().filter((f) => !s.has(f.bookingId)));
     };
 
@@ -1176,6 +1249,12 @@ const Fees = (() => {
         dOnly,
         dTime,
         METHODS,
+        SELF_RENTAL_MESSAGE,
+        SELF_RENTAL_TOOLTIP,
+        deniedAttempts: () => {
+            const attempts = rd(DENIED_KEY, []);
+            return Array.isArray(attempts) ? attempts : [];
+        },
         issue,
         recordPayment,
         waive,
