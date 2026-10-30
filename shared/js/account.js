@@ -132,7 +132,7 @@
         const meta = emp
             ? m('Customer', who(b)) + m('From', b.from) + m('To', b.to)
             : m('From', b.from) + m('To', b.to);
-        return `<article class="bk" data-bk="${A.esc(b.id)}"><div class="bkimg" style="background:linear-gradient(135deg,${c.c},#0b0b0e)"><em>${A.esc(c.mk.split('-')[0])}</em>${bookingImg(c)}</div>
+        return `<article class="bk" data-bk="${A.esc(b.id)}"><div class="bkimg"><em>${A.esc(c.mk.split('-')[0])}</em>${bookingImg(c)}</div>
   <div class="bkbody"><div class="bktop"><div>${badge(b.status)}<small>${A.esc(c.mk)}</small><h3>${A.esc(c.n)}</h3></div>
   <div class="bkprice"><b>${A.money(b.total)}</b><small>${b.employeeRental ? 'final payable' : 'total'}</small></div></div>
   ${empBox(b, emp)}<div class="bkmeta">${meta}</div><div class="bgrid">${Branches.detail(b.pickup, 'Pickup branch') + Branches.detail(b.ret, 'Return branch')}</div>${b.oneWayFee > 0 ? `<p class="fee-note">One-way return fee included: ${A.money(b.oneWayFee)}</p>` : ''}${dmgBox(b)}
@@ -418,7 +418,7 @@
                     `<label class="cond c-${key}${k === key ? ' on' : ''}"><input type="radio" name="cond-${b.id}" value="${key}"${k === key ? ' checked' : ''}${busy ? ' disabled' : ''}><span>${v.label}</span></label>`,
             )
             .join('');
-        return `<article class="bk insp" data-ib="${A.esc(b.id)}"><div class="bkimg" style="background:linear-gradient(135deg,${c.c},#0b0b0e)"><em>${A.esc(c.mk.split('-')[0])}</em>${bookingImg(c)}</div>
+        return `<article class="bk insp" data-ib="${A.esc(b.id)}"><div class="bkimg"><em>${A.esc(c.mk.split('-')[0])}</em>${bookingImg(c)}</div>
   <div class="bkbody"><div class="bktop"><div>${badge(b.status)}<small>${A.esc(c.mk)}</small><h3>${A.esc(c.n)}</h3></div><div class="bkprice"><b>${A.esc(carFor(b) ? carReg(carIndexOf(b)) : '')}</b><small>registration</small></div></div>
   ${empBanner(b, self)}<div class="bkmeta">${m('Booking ID', b.id) + m('Customer', who(b)) + m('Returned', A.stamp(b.returnedAt).slice(0, 16)) + m('Rental period', b.from + ' to ' + b.to)}</div>
   <div class="bgrid">${Branches.detail(b.pickup, 'Pickup branch') + Branches.detail(b.ret, 'Return branch')}</div>

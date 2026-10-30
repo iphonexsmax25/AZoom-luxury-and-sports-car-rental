@@ -584,7 +584,7 @@ const Reviews = (() => {
         mState = { type: 'form' };
         openLayer(`<form class="rvm rvform" role="dialog" aria-modal="true" aria-labelledby="rvm-t" novalidate>
    <header><div><small>${r ? 'Edit your review' : 'Share your experience'}</small><h2 id="rvm-t">${r ? 'Edit Review' : 'Leave a Review'}</h2></div><button type="button" class="rvx" aria-label="Close">&times;</button></header>
-   <div class="rvm-body"><div class="rvveh"><div class="rvveh-img" style="background:linear-gradient(135deg,${c.c},#0b0b0e)"><em>${E(String(c.mk).split('-')[0])}</em>${typeof carImg === 'function' && c.img !== undefined ? carImg(c) : ''}</div>
+   <div class="rvm-body"><div class="rvveh"><div class="rvveh-img"><em>${E(String(c.mk).split('-')[0])}</em>${typeof bookingImg === 'function' ? bookingImg(c) : ''}</div>
     <div class="rvveh-info"><h3>${E(b.title)}</h3><dl><div><dt>Booking ID</dt><dd>${E(b.id)}</dd></div><div><dt>Rental Dates</dt><dd>${E(b.from)} &rarr; ${E(b.to)}</dd></div></dl><span class="rvver">${ICON.check} Verified Rental</span></div></div>
     ${CATS.map(([k, l]) => `<div class="rvq"><span class="rvql" id="rvl-${k}">${l}</span><div class="rvin" role="radiogroup" aria-labelledby="rvl-${k}" data-cat="${k}">${[1, 2, 3, 4, 5].map((n) => `<button type="button" role="radio" aria-checked="false" aria-label="${n} star${n > 1 ? 's' : ''}: ${WORDS[n]}" data-v="${n}">&#9733;</button>`).join('')}<span class="rvin-t" aria-live="polite"></span></div></div>`).join('')}
     <div class="rvq col"><label class="rvql" for="rv-text">Your comments <small>(optional)</small></label><textarea id="rv-text" maxlength="${MAX}" rows="4" placeholder="Tell other renters about the car, the pickup and the return...">${r ? E(r.comment) : ''}</textarea><div class="rvcc"><span id="rv-cc">0 / ${MAX}</span></div></div>
@@ -699,7 +699,7 @@ const Reviews = (() => {
             c = (b && carFor(b)) || { mk: '', n: r.vehicleName, c: '#222' },
             t = r.ratings,
             ed = canEdit(r);
-        return `<article class="rvcard rvmine${r.status === 'hidden' ? ' hid' : ''}"><div class="rvmine-img" style="background:linear-gradient(135deg,${c.c},#0b0b0e)"><em>${E(String(c.mk).split('-')[0])}</em>${typeof carImg === 'function' && c.img !== undefined ? carImg(c) : ''}</div>
+        return `<article class="rvcard rvmine${r.status === 'hidden' ? ' hid' : ''}"><div class="rvmine-img"><em>${E(String(c.mk).split('-')[0])}</em>${typeof bookingImg === 'function' ? bookingImg(c) : ''}</div>
    <div class="rvmine-b"><div class="rvmine-top"><div><small>${E(c.mk)}</small><h3>${E(r.vehicleName)}</h3></div><span class="rvver">${ICON.check} Verified Rental</span></div>
    <div class="rvmeta"><span>Booking ID <b>${E(r.bookingId)}</b></span><span>Reviewed <b>${fmt(r.createdAt)}</b>${r.editedAt ? ' (edited)' : ''}</span><span>Rental completed <b>${fmt(r.completedAt)}</b></span></div>
    <div class="rvrow">${stars(t.overall)}<b>${t.overall}.0</b>${r.recommend ? `<span class="rvyes">${ICON.thumb} Recommended</span>` : `<span class="rvno">Not recommended</span>`}</div>

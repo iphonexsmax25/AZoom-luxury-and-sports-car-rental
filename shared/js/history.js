@@ -442,7 +442,7 @@ const History = (() => {
         const rent = m.c
             ? `<a class="act" href="../payment/payment.html?${new URLSearchParams({ car: b.carId, pk: b.pickup, rt: b.ret })}">Rent Again</a>`
             : '';
-        return `<article class="bk hist" data-hb="${E(b.id)}"><div class="bkimg" style="background:linear-gradient(135deg,${c.c},#0b0b0e)"><em>${E(String(c.mk).split('-')[0])}</em>${typeof bookingImg === 'function' ? bookingImg(c) : ''}</div>
+        return `<article class="bk hist" data-hb="${E(b.id)}"><div class="bkimg"><em>${E(String(c.mk).split('-')[0])}</em>${typeof bookingImg === 'function' ? bookingImg(c) : ''}</div>
   <div class="bkbody"><div class="bktop"><div>${statusPill(b)}<small>${E(c.mk)}</small><h3>${E(c.n)}</h3><small>Plate ${E(m.plate)}</small></div><div class="bkprice"><b>${M(m.total)}</b><small>total rental cost</small></div></div>
   ${statusNote ? `<p class="hint">${statusNote}</p>` : ''}${rejectionReason ? `<div class="rejection-note"><b>Reason for Rejection</b><p>${E(rejectionReason)}</p></div>` : ''}<div class="bkmeta">${
       g('Booking ID', b.id) +
@@ -491,7 +491,7 @@ const History = (() => {
         const m = model(b),
             c = m.c || { mk: '', n: b.title, c: '#222' },
             s = m.s;
-        return `<article class="bk hist" data-hb="${E(b.id)}"><div class="bkimg" style="background:linear-gradient(135deg,${c.c},#0b0b0e)"><em>${E(String(c.mk).split('-')[0])}</em>${typeof bookingImg === 'function' ? bookingImg(c) : ''}</div>
+        return `<article class="bk hist" data-hb="${E(b.id)}"><div class="bkimg"><em>${E(String(c.mk).split('-')[0])}</em>${typeof bookingImg === 'function' ? bookingImg(c) : ''}</div>
   <div class="bkbody"><div class="bktop"><div>${statusPill(b)}<small>${E(c.mk)}</small><h3>${E(c.n)}</h3><small>Plate ${E(m.plate)} · ${E(m.code)}</small></div><div class="bkprice"><b>${M(m.total)}</b><small>total rental cost</small></div></div>
   <div class="bkmeta">${
       g('Customer Name', m.name) +

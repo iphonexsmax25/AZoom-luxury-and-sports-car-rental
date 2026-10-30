@@ -732,7 +732,7 @@ body.rv-lock {
 }
 .rvveh {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 180px minmax(0, 1fr);
     gap: 18px;
     background: var(--rvglass);
     border: 1px solid var(--rvedge);
@@ -741,14 +741,18 @@ body.rv-lock {
 }
 .rvveh-img {
     position: relative;
-    min-height: 130px;
+    align-self: start;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: #242428;
 }
 .rvveh-img img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
 }
 .rvveh-img em {
     position: absolute;
@@ -764,9 +768,11 @@ body.rv-lock {
     gap: 10px;
     align-content: center;
     justify-items: start;
+    min-width: 0;
 }
 .rvveh-info h3 {
     font-size: 19px;
+    overflow-wrap: anywhere;
 }
 .rvveh-info dl {
     display: grid;
@@ -1030,7 +1036,7 @@ body.rv-lock {
 
 .rvmine {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 180px minmax(0, 1fr);
     padding: 0;
     overflow: hidden;
     gap: 0;
@@ -1038,14 +1044,18 @@ body.rv-lock {
 }
 .rvmine-img {
     position: relative;
-    min-height: 160px;
+    align-self: start;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: #242428;
 }
 .rvmine-img img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
 }
 .rvmine-img em {
     position: absolute;
@@ -1061,6 +1071,7 @@ body.rv-lock {
     flex-direction: column;
     gap: 12px;
     min-width: 0;
+    overflow-wrap: anywhere;
 }
 .rvmine-top {
     display: flex;
@@ -1333,13 +1344,13 @@ body.rv-lock {
         grid-template-columns: 1fr;
     }
     .rvmine-img {
-        min-height: 130px;
+        width: min(100%, 360px);
     }
     .rvveh {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
     .rvveh-img {
-        min-height: 120px;
+        width: min(100%, 360px);
     }
     .rvveh-info {
         padding: 0 16px 16px;
