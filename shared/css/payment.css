@@ -1,0 +1,520 @@
+/* Payment page (../payment/payment.html) and booking confirmation / receipt (../booking-confirmation/booking-confirmation.html). Loaded after account.css */
+.paypage {
+    padding: 40px 24px 96px;
+}
+.paypage .back {
+    margin-bottom: 20px;
+}
+.ptitle {
+    font-size: clamp(30px, 4vw, 40px);
+    font-weight: 800;
+}
+.psub {
+    color: var(--mute);
+    font-size: 14px;
+    margin: 6px 0 28px;
+}
+.paygrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 32px;
+    align-items: start;
+    max-width: 1000px;
+}
+.pcard {
+    padding: 28px;
+    margin-bottom: 24px;
+    border-radius: 20px;
+}
+.pcard h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+}
+.pcard h2 svg {
+    color: var(--red2);
+}
+.secure {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #22c55e;
+    letter-spacing: 0;
+}
+.pcard h2 .secure svg {
+    color: #22c55e;
+}
+.fld input[readonly] {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+.brands {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: -6px 0 18px;
+}
+.brands span {
+    background: #222226;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #b4b4bc;
+}
+.note2 {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: #1a1a1e;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    color: var(--mute);
+}
+.note2 svg {
+    color: #22c55e;
+    flex: none;
+    margin-top: 2px;
+}
+.term {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    background: #17171a;
+}
+.tchk {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+}
+.tchk input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+.tchk .box {
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid #4a4a52;
+    border-radius: 6px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    transition:
+        background 0.15s,
+        border-color 0.15s;
+}
+.tchk input:checked + .box {
+    background: var(--red);
+    border-color: var(--red);
+}
+.tchk input:checked + .box::after {
+    content: '';
+    width: 5px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-1px, -1px);
+}
+.tchk input:focus-visible + .box {
+    outline: 2px solid var(--red2);
+    outline-offset: 2px;
+}
+.ttl {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.ttl svg {
+    color: var(--red2);
+}
+.term ul {
+    list-style: none;
+    margin: 12px 0 0 34px;
+    display: grid;
+    gap: 8px;
+}
+.term li {
+    position: relative;
+    font-size: 13px;
+    color: #c4c4cc;
+    line-height: 1.5;
+}
+.term li::before {
+    content: '';
+    position: absolute;
+    left: -14px;
+    top: 0.6em;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #52525b;
+}
+.paybtn {
+    width: 100%;
+    justify-content: center;
+    padding: 18px;
+    font-size: 16px;
+    border-radius: 14px;
+}
+.paybtn:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+.paycol .err {
+    margin-bottom: 14px;
+}
+.sumcard {
+    position: sticky;
+    top: 96px;
+    background: linear-gradient(180deg, #1a1a1e, #131316);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+}
+.sumimg {
+    position: relative;
+    height: 150px;
+}
+.sumimg img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.sumbody {
+    padding: 20px;
+}
+.sumbody > small {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+    text-transform: uppercase;
+}
+.sumbody h3 {
+    font-size: 20px;
+    margin: 4px 0 14px;
+}
+.sumbody dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    font-size: 14px;
+}
+.sumbody dt {
+    color: var(--mute);
+}
+.sumbody dd {
+    font-weight: 700;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+.stot {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--line);
+    margin-top: 10px;
+    padding-top: 14px;
+    font-weight: 700;
+}
+.stot b {
+    font-size: 26px;
+    font-weight: 800;
+}
+
+/* Confirmation + receipt */
+.confwrap {
+    display: grid;
+    place-items: start center;
+}
+.conf {
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    padding: 32px;
+}
+.tickbig {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    margin: 0 auto 18px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: linear-gradient(135deg, #e8283a, #9d1a1f);
+}
+.conf h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0 0 10px;
+}
+.csub {
+    color: var(--mute);
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0 auto 14px;
+}
+.cstat {
+    margin-bottom: 8px;
+}
+.cmsg {
+    color: var(--mute);
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+.csum,
+.receipt {
+    box-sizing: border-box;
+    min-width: 0;
+    text-align: left;
+    background: #17171a;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+}
+.csum > div,
+.receipt > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 6px 0;
+    font-size: 14px;
+}
+.csum > .additional-charges {
+    display: block;
+    min-width: 0;
+}
+.additional-charges h3 {
+    font-size: 14px;
+    margin: 4px 0 12px;
+}
+.charge-grid,
+.charge-card,
+.charge-card *,
+.charge-total,
+.charge-total * {
+    box-sizing: border-box;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
+}
+.charge-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+.charge-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+    padding: 12px;
+    background: #1d1d21;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+}
+.additional-charges .charge-label {
+    color: #d4d4d8;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+.additional-charges .charge-amount {
+    color: var(--mute);
+    font-size: 15px;
+    font-weight: 800;
+    text-align: left;
+}
+.additional-charges .charge-card.has-penalty .charge-amount {
+    color: #ff7b85;
+}
+.charge-reason {
+    display: block;
+    color: var(--mute);
+    font-size: 12px;
+    line-height: 1.45;
+}
+.charge-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(225, 29, 46, 0.1);
+    border: 1px solid rgba(225, 29, 46, 0.35);
+    border-radius: 10px;
+    font-weight: 700;
+}
+.additional-charges .charge-total span {
+    color: var(--text);
+}
+.additional-charges .charge-total b {
+    color: #ff7b85;
+    font-size: 18px;
+    font-weight: 800;
+    text-align: right;
+}
+.additional-charges > .rline {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 6px 0;
+    font-size: 14px;
+}
+.rline span small {
+    display: block;
+    margin-top: 3px;
+    color: var(--mute);
+    font-size: 12px;
+}
+.csum span,
+.receipt span {
+    color: var(--mute);
+}
+.csum b,
+.receipt b {
+    text-align: right;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+.ctot {
+    border-top: 1px solid var(--line);
+    margin-top: 6px;
+    padding-top: 12px !important;
+    align-items: baseline;
+}
+.ctot span {
+    color: var(--mute);
+}
+.ctot b {
+    font-size: 20px;
+    font-weight: 800;
+}
+.receipt h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0;
+    margin-bottom: 6px;
+    color: var(--text);
+}
+.receipt h2 svg {
+    color: var(--red2);
+}
+.conf .btn.ghost {
+    margin-top: 10px;
+    background: transparent;
+}
+.conf .btn.ghost:hover {
+    border-color: var(--red);
+}
+
+@media (max-width: 900px) {
+    .paygrid {
+        grid-template-columns: 1fr;
+    }
+    .sumcard {
+        position: static;
+        order: -1;
+    }
+}
+@media (max-width: 560px) {
+    .pcard {
+        padding: 20px;
+    }
+    .conf {
+        padding: 24px 18px;
+    }
+}
+@media (max-width: 480px) {
+    .charge-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .charge-total {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .charge-total b {
+        text-align: left;
+    }
+}
+@media print {
+    nav,
+    footer,
+    .back,
+    #prt,
+    .conf .btn,
+    .cmsg {
+        display: none !important;
+    }
+    body,
+    .paypage {
+        background: #fff !important;
+        color: #000 !important;
+    }
+    .conf,
+    .csum,
+    .receipt {
+        background: #fff !important;
+        border-color: #ccc !important;
+        color: #000 !important;
+    }
+    .conf * {
+        color: #000 !important;
+    }
+    .tickbig {
+        background: #eee !important;
+    }
+}
+.tlink {
+    margin-left: auto;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--red2);
+    letter-spacing: 0;
+}
+.tlink:hover {
+    text-decoration: underline;
+}
+.tlink + .tlink {
+    margin-left: 14px;
+}
+.pcard h2:has(.tlink) {
+    flex-wrap: wrap;
+}
+
+.tchk .rbox {
+    border-radius: 50%;
+}
+.tchk input:checked + .rbox::after {
+    width: 10px;
+    height: 10px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    transform: none;
+}
