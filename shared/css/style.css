@@ -1137,8 +1137,3 @@ footer .social-icons a:nth-child(4):focus-visible {
         display: none !important;
     }
 }
-/* Hide Netlify floating badge */
-#netlify-badge-container, 
-[data-netlify-badge] {
-  display: none !important;
-}
