@@ -265,9 +265,16 @@ footer .logo img {
     .hero .cta .btn:not(.red) {
         transition: none;
     }
+    .hero .cta .btn:not(.red)::before {
+        transition: none;
+    }
     .hero .cta .btn:not(.red):hover,
     .hero .cta .btn:not(.red):focus-visible {
         transform: none;
+    }
+    .hero .cta .btn:not(.red):hover::before,
+    .hero .cta .btn:not(.red):focus-visible::before {
+        left: -75%;
     }
 }
 
@@ -335,12 +342,31 @@ footer .logo img {
     flex-wrap: wrap;
 }
 .hero .cta .btn:not(.red) {
+    position: relative;
+    overflow: hidden;
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
         box-shadow 0.2s ease,
         color 0.2s ease,
         transform 0.2s ease;
+}
+.hero .cta .btn:not(.red)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -75%;
+    width: 55%;
+    background: linear-gradient(
+        110deg,
+        transparent,
+        rgba(255, 255, 255, 0.38),
+        transparent
+    );
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+    pointer-events: none;
 }
 .hero .cta .btn:not(.red):hover,
 .hero .cta .btn:not(.red):focus-visible {
@@ -349,6 +375,10 @@ footer .logo img {
     color: #fff;
     box-shadow: 0 8px 22px rgba(225, 29, 46, 0.4);
     transform: translateY(-2px);
+}
+.hero .cta .btn:not(.red):hover::before,
+.hero .cta .btn:not(.red):focus-visible::before {
+    left: 125%;
 }
 .note {
     margin-top: 20px;
