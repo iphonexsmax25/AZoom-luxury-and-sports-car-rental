@@ -14,6 +14,8 @@ The website includes an employee portal for managing active bookings, vehicle re
 
 Customer rebooking eligibility is checked against the latest local booking and penalty data when the fleet, vehicle, checkout, and booking flows run. This project has no backend, so browser-side checks cannot prevent deliberate local-storage or client-code tampering. A production deployment must enforce the same rule in an authenticated server-side booking API before accepting bookings or payments.
 
+The demo rental and Penalty Fee payment forms validate CVV values in the browser as exactly three digits and do not save them. Because this project has no backend, this is not server-side payment validation; a production payment API must independently validate the CVV and must never persist it.
+
 ## How to run
 
 1. Install the **Live Server** extension in **Visual Studio Code** if it is not already installed.

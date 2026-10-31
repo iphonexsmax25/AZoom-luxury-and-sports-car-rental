@@ -94,7 +94,7 @@ CarsData.ready.then(function () {
    <div class="fld">${L('card', 'Card Number', 'cd')}<input id="cd" name="cd" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="23" required></div>
    <div class="fld">${L('user', 'Card Holder Name', 'cn')}<input id="cn" name="cn" autocomplete="cc-name" placeholder="JOHN DOE" maxlength="60" required></div>
    <div class="two"><div class="fld"><label for="ex">Expiry Date</label><input id="ex" name="ex" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" maxlength="5" required></div>
-   <div class="fld"><label for="cv">CVC</label><input id="cv" name="cv" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4" required></div></div>
+   <div class="fld"><label for="cv">CVV</label><input id="cv" name="cv" type="password" inputmode="numeric" pattern="[0-9]{3}" minlength="3" maxlength="3" autocomplete="cc-csc" placeholder="123" required></div></div>
    <p class="note2">${A.ic('lock', 14)}<span>Demo only: nothing is charged. Only the last 4 digits of your card are kept for the receipt.</span></p>
   </section>
   <p class="err" id="err" role="alert"></p>
@@ -138,9 +138,8 @@ CarsData.ready.then(function () {
         if (d.length >= 3) d = d.slice(0, 2) + '/' + d.slice(2);
         e.target.value = d;
     });
-    $('#cv').addEventListener('input', (e) => {
-        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
-    });
+    const cvInput = $('#cv'),
+        cvv = PaymentValidation.bindCvv(cvInput);
     $('#pay').addEventListener('input', (e) => {
         err.textContent = '';
         e.target.classList.remove('bad');
@@ -150,11 +149,15 @@ CarsData.ready.then(function () {
         e.preventDefault();
         if (paying) return;
         err.textContent = '';
-        const f = new FormData(e.target),
-            digits = String(f.get('cd')).replace(/\D/g, ''),
+        const f = new FormData(e.target);
+        let cv = String(f.get('cv') || '');
+        f.delete('cv');
+        const cvError = cvv.validate(cv);
+        cv = '';
+        cvv.clear();
+        const digits = String(f.get('cd')).replace(/\D/g, ''),
             cn = String(f.get('cn')).trim(),
-            ex = String(f.get('ex')),
-            cv = String(f.get('cv'));
+            ex = String(f.get('ex'));
         const bad = (m, el) => {
             err.textContent = m;
             A.toast(m, 'err');
@@ -162,6 +165,7 @@ CarsData.ready.then(function () {
             $(el).focus();
         };
         e.target.querySelectorAll('.bad').forEach((x) => x.classList.remove('bad'));
+        if (cvError) return bad(cvError, '#cv');
         const cur = Fees.forBooking(id),
             n = toPay();
         if (cur.outstanding <= 0)
@@ -188,8 +192,6 @@ CarsData.ready.then(function () {
             mm = now.getMonth() + 1;
         if (+m[2] < yy || (+m[2] === yy && +m[1] < mm))
             return bad('Invalid card: this card has expired.', '#ex');
-        if (cv.length < 3)
-            return bad('Invalid CVC. Enter the 3 or 4 digit code on your card.', '#cv');
         paying = true;
         go.disabled = true;
         go.dataset.busy = '1';
@@ -202,9 +204,11 @@ CarsData.ready.then(function () {
                     mode() === 'full' ? cur.outstanding : n,
                     digits.slice(-4),
                 );
+                cvv.clear();
                 b = mine();
                 receipt(r.payment);
             } catch (x) {
+                cvv.clear();
                 paying = false;
                 go.disabled = false;
                 delete go.dataset.busy;
