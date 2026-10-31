@@ -419,9 +419,13 @@ const History = (() => {
    <div class="acts" style="margin:12px 0 0"><button type="button" class="act" data-hrec="${E(b.id)}">Download Receipt (.txt)</button></div></div>`;
     }
     function detailCustomer(b) {
-        const m = model(b);
+        const m = model(b),
+            eligibility = A.bookingEligibility(b.email),
+            restriction = eligibility.eligible
+                ? ''
+                : `<p class="booking-restriction" role="alert">${E(eligibility.message)}</p>`;
         return `<div class="hpanel dsec"><div class="hphead"><b>Booking Details · ${E(b.id)}</b>${statusPill(b)}</div>
-   ${bookingBlock(m, false) + vehicleBlock(m) + paymentBlock(m, false) + logBlock(m) + feeBlock(m, true) + inspectionBlock(m, false)}</div>`;
+   ${restriction + bookingBlock(m, false) + vehicleBlock(m) + paymentBlock(m, false) + logBlock(m) + feeBlock(m, true) + inspectionBlock(m, false)}</div>`;
     }
 
     /* ---------- Customer cards ---------- */
@@ -439,7 +443,8 @@ const History = (() => {
             b.status === 'rejected'
                 ? b.rejectionReason || b.cancellationReason || 'No reason was recorded.'
                 : '';
-        const rent = m.c
+        const eligibility = A.bookingEligibility(b.email),
+            rent = m.c && eligibility.eligible
             ? `<a class="act" href="../payment/payment.html?${new URLSearchParams({ car: b.carId, pk: b.pickup, rt: b.ret })}">Rent Again</a>`
             : '';
         return `<article class="bk hist" data-hb="${E(b.id)}"><div class="bkimg"><em>${E(String(c.mk).split('-')[0])}</em>${typeof bookingImg === 'function' ? bookingImg(c) : ''}</div>

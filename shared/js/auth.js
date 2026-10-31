@@ -241,6 +241,83 @@ const Auth = (() => {
     };
     const bookings = () => rd(K.b, []).map(norm),
         inspections = () => rd(K.i, []);
+    const returnCompleted = (b) =>
+        !!b.returnedAt && !!b.returnEmployeeId && !!b.returnedByEmail;
+    const bookingEligibility = (email) => {
+        const owner = String(email || '').trim().toLowerCase(),
+            mine = bookings().filter(
+                (b) => String(b.email || '').trim().toLowerCase() === owner,
+            ),
+            active = mine.some((b) => ['pending', 'confirmed'].includes(b.status)),
+            processing = mine.some(
+                (b) =>
+                    b.status === 'awaiting_inspection' ||
+                    (['returned', 'completed'].includes(b.status) &&
+                        !returnCompleted(b)),
+            );
+        if (active)
+            return {
+                eligible: false,
+                reason: 'active-rental',
+                message:
+                    'You currently have an active rental. Please return your vehicle before making another booking.',
+                outstanding: 0,
+            };
+        if (processing)
+            return {
+                eligible: false,
+                reason: 'return-processing',
+                message:
+                    'Your vehicle return is still being processed. You can make another booking after the return has been completed.',
+                outstanding: 0,
+            };
+
+        const completed = mine.filter((b) =>
+                ['returned', 'completed'].includes(b.status),
+            ),
+            fees = rd(K.f, []).filter((f) =>
+                completed.some((b) => b.id === f.bookingId),
+            ),
+            balanceFor = (f) =>
+                f.waiver
+                    ? 0
+                    : Math.max(
+                          0,
+                          r2(
+                              (Array.isArray(f.charges) ? f.charges : []).reduce(
+                                  (sum, charge) => sum + (Number(charge.amount) || 0),
+                                  0,
+                              ) -
+                                  (Array.isArray(f.payments) ? f.payments : []).reduce(
+                                      (sum, payment) => sum + (Number(payment.amount) || 0),
+                                      0,
+                                  ),
+                          ),
+                      ),
+            outstanding = r2(fees.reduce((sum, f) => sum + balanceFor(f), 0));
+        if (outstanding > 0) {
+            const partial = fees.some(
+                (f) =>
+                    balanceFor(f) > 0 &&
+                    (Array.isArray(f.payments) ? f.payments : []).some(
+                        (payment) => Number(payment.amount) > 0,
+                    ),
+                ),
+                amount = outstanding.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                });
+            return {
+                eligible: false,
+                reason: partial ? 'partial-penalty' : 'unpaid-penalty',
+                message: partial
+                    ? `A remaining penalty balance of S$${amount} must be paid before you can make another booking.`
+                    : `You have an outstanding penalty balance of S$${amount}. Please pay the full balance before making another booking.`,
+                outstanding,
+            };
+        }
+        return { eligible: true, reason: null, message: '', outstanding: 0 };
+    };
     const bookingConflict = (email, carId, from, to) => {
         const all = bookings(),
             overlaps = (b) =>
@@ -508,7 +585,7 @@ const Auth = (() => {
         const x = accountOf(email);
         return !!x && x.role === 'employee';
     };
-    const r2 = (n) => Math.round(n * 100) / 100;
+    const r2 = (n) => Math.round((Number(n) || 0) * 100) / 100;
     /* rental = daily rate x days, fee = one-way fee. Returns every figure shown in the booking summary. */
     const empPrice = (rental, fee) => {
         const original = r2(rental),
@@ -547,6 +624,10 @@ const Auth = (() => {
     function addBooking(b) {
         const acct = accountOf(b.email);
         if (!acct) throw Error('Account not found. Please sign in again.');
+        if (acct.role !== 'employee') {
+            const eligibility = bookingEligibility(acct.email);
+            if (!eligibility.eligible) throw Error(eligibility.message);
+        }
         const pickup = String(b.from || ''),
             ret = String(b.to || ''),
             currentDate = today();
@@ -691,6 +772,7 @@ const Auth = (() => {
             throw Error('Only confirmed bookings can be marked as returned.');
         Object.assign(b, {
             status: 'awaiting_inspection',
+            vehicleReturnCompleted: true,
             returnedAt: Date.now(),
             returnedBy: 'employee',
             returnedByEmail: e.email,
@@ -723,7 +805,10 @@ const Auth = (() => {
                   employeeRental: true,
               }
             : { employeeRental: false };
-        Object.assign(b, patch || {}, audit, { status: 'completed' });
+        Object.assign(b, patch || {}, audit, {
+            status: 'completed',
+            vehicleReturnCompleted: true,
+        });
         wr(K.b, a);
         const record = Object.assign({}, rec, audit, bookingSide);
         addInspection(record);
@@ -855,6 +940,7 @@ const Auth = (() => {
         home,
         guard,
         bookings,
+        bookingEligibility,
         bookingConflict,
         inspections,
         addBooking,

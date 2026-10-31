@@ -12,6 +12,8 @@ AZoom is a luxury and sports car rental website designed for customers to browse
 
 The website includes an employee portal for managing active bookings, vehicle returns, inspections, penalty fees, payment status, and customer records. Employees remain responsible for penalties on their own rentals and can pay them through the customer payment flow, but cannot administer those penalties themselves. Vehicle information is loaded from `data/cars.json`, while account, booking, payment, review, and inspection data is stored in the browser's local storage for demonstration and testing.
 
+Customer rebooking eligibility is checked against the latest local booking and penalty data when the fleet, vehicle, checkout, and booking flows run. This project has no backend, so browser-side checks cannot prevent deliberate local-storage or client-code tampering. A production deployment must enforce the same rule in an authenticated server-side booking API before accepting bookings or payments.
+
 ## How to run
 
 1. Install the **Live Server** extension in **Visual Studio Code** if it is not already installed.

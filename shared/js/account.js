@@ -148,6 +148,10 @@
             'overview'; /* dashboard tab + Booking History filter / open detail panels (kept while the page redraws) */
         const dash = () => {
             const mine = newest(A.bookings().filter((b) => b.email === u.email));
+            const eligibility = A.bookingEligibility(u.email),
+                bookingRestriction = eligibility.eligible
+                    ? ''
+                    : `<p class="booking-restriction" role="alert">${A.esc(eligibility.message)}</p>`;
             /* Overview shows only bookings still in progress. Cancelled, completed and returned-and-finished bookings live in Booking History. */
             const owes = (b) => Fees.forBooking(b.id).outstanding > 0;
             const shown = mine.filter((b) => A.LIVE.includes(b.status));
@@ -176,7 +180,7 @@
             const tabs = `<div class="tabs" role="tablist"><button type="button" role="tab" data-dtab="overview" aria-selected="${dtab === 'overview'}">${A.ic('car', 16)} Overview</button><button type="button" role="tab" data-dtab="history" aria-selected="${dtab === 'history'}">${A.ic('hist', 16)} Booking History <span class="cnt">${mine.length}</span></button><button type="button" role="tab" data-dtab="penalty" aria-selected="${dtab === 'penalty'}">${A.ic('card', 16)} Penalty Fee History${nPen ? ` <span class="cnt">${nPen}</span>` : ''}</button>${Reviews.tab(dtab === 'reviews', u.email)}</div>`;
             app.innerHTML =
                 head('MY DASHBOARD', 'Welcome back') +
-                `<div class="kpis">${kpi('', 'cal', 'Total bookings', counted.length) + kpi('', 'clock', 'Active reservations', activeN) + kpi('', 'up', 'Total spent', A.money(spent)) + kpi('k3', 'warn', 'Outstanding Penalty Fees', owed > 0 ? A.money(owed) : `<span class="kpi-none">No Outstanding Penalties</span>`)}</div>${Reviews.banner(u.email)}${tabs}` +
+                `<div class="kpis">${kpi('', 'cal', 'Total bookings', counted.length) + kpi('', 'clock', 'Active reservations', activeN) + kpi('', 'up', 'Total spent', A.money(spent)) + kpi('k3', 'warn', 'Outstanding Penalty Fees', owed > 0 ? A.money(owed) : `<span class="kpi-none">No Outstanding Penalties</span>`)}</div>${Reviews.banner(u.email)}${bookingRestriction}${tabs}` +
                 (dtab === 'reviews'
                     ? Reviews.mine(u.email)
                     : dtab === 'history'

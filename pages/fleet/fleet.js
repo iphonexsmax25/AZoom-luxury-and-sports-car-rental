@@ -77,6 +77,16 @@ CarsData.ready.then(() => {
         return [...document.querySelectorAll(`input[data-g="${g}"]:checked`)].map((i) => i.value);
     }
     function render() {
+        const eligibilityNotice = $('booking-eligibility'),
+            currentUser = Auth.user();
+        if (currentUser && currentUser.role !== 'employee') {
+            const eligibility = Auth.bookingEligibility(currentUser.email);
+            eligibilityNotice.hidden = eligibility.eligible;
+            eligibilityNotice.textContent = eligibility.message;
+        } else {
+            eligibilityNotice.hidden = true;
+            eligibilityNotice.textContent = '';
+        }
         const q = $('q').value.trim().toLowerCase(),
             max = +$('max').value;
         const cat = picked('cat'),
@@ -130,6 +140,12 @@ CarsData.ready.then(() => {
     $('max').addEventListener('input', redraw);
     $('q').addEventListener('input', redraw);
     $('sort').addEventListener('change', redraw);
+    addEventListener('storage', (e) => {
+        if (e.key === Auth.K.b || e.key === Auth.K.f || e.key === Auth.K.s) render();
+    });
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) render();
+    });
     $('cars').addEventListener('click', (e) => {
         const b = e.target.closest('[data-page]');
         if (!b || b.disabled) return;

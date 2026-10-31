@@ -145,7 +145,8 @@ CarsData.ready.then(function () {
     });
     /* Book Now / Reserve This Car scroll to the booking form */
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('[data-go]')) return;
+        const trigger = e.target.closest('[data-go]');
+        if (!trigger || trigger.getAttribute('aria-disabled') === 'true') return;
         e.preventDefault();
         document.getElementById('book').scrollIntoView({
             behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth',
@@ -217,8 +218,26 @@ CarsData.ready.then(function () {
         }
         if (reset) dateNotice = beforeReset ? beforeReset.message : '';
         const error = BookingDates.validate(fr.value, to.value);
-        submitButton.disabled = !!error;
-        err.textContent = error ? error.message : dateNotice;
+        const eligibility = emp ? { eligible: true, message: '' } : A.bookingEligibility(u.email);
+        submitButton.disabled = !!error || !eligibility.eligible;
+        err.textContent = error
+            ? error.message
+            : eligibility.eligible
+              ? dateNotice
+              : eligibility.message;
+        document.querySelectorAll('[data-go]').forEach((link) => {
+            if (eligibility.eligible) {
+                link.href = '#book';
+                link.removeAttribute('aria-disabled');
+                link.removeAttribute('tabindex');
+                link.classList.remove('booking-action-disabled');
+            } else {
+                link.removeAttribute('href');
+                link.setAttribute('aria-disabled', 'true');
+                link.setAttribute('tabindex', '-1');
+                link.classList.add('booking-action-disabled');
+            }
+        });
     }
     const days = () =>
         Math.max(1, Math.round((new Date(to.value) - new Date(fr.value)) / 864e5)) || 1;
@@ -235,6 +254,12 @@ CarsData.ready.then(function () {
         );
     });
     sum();
+    addEventListener('storage', (e) => {
+        if (e.key === A.K.b || e.key === A.K.f) sum();
+    });
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) sum();
+    });
 
     /* "Book Now" checks the dates, then opens the payment page (../payment/payment.html) with the choices filled in */
     document.getElementById('book').addEventListener('submit', (e) => {
@@ -244,6 +269,8 @@ CarsData.ready.then(function () {
             err.textContent = m;
             A.toast(m, 'err');
         };
+        const eligibility = emp ? { eligible: true, message: '' } : A.bookingEligibility(u.email);
+        if (!eligibility.eligible) return bad(eligibility.message);
         const f = new FormData(e.target),
             from = fr.value,
             until = to.value;

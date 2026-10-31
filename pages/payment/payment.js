@@ -19,6 +19,13 @@ CarsData.ready.then(function () {
         A.isEmployee(
             u.email,
         ); /* employee account: 50% rental discount + liability acknowledgement */
+    const eligibility = emp
+        ? { eligible: true, message: '' }
+        : A.bookingEligibility(u.email);
+    if (!eligibility.eligible) {
+        app.innerHTML = `<a class="back" href="${A.esc(carPage)}">${A.ic('back', 16)} Back to ${A.esc(c.n)}</a><div class="booking-restriction" role="alert">${A.esc(eligibility.message)}</div><a class="btn red" href="../dashboard/dashboard.html">View My Dashboard</a>`;
+        return;
+    }
     document.title = `Book ${c.mk} ${c.n} | AZoom`;
     const carPage = '../car/car.html?model=' + encodeURIComponent(carKey(c));
     const pick = Branches.pick,
@@ -283,6 +290,10 @@ CarsData.ready.then(function () {
             return false;
         };
         form.querySelectorAll('.bad').forEach((x) => x.classList.remove('bad'));
+        const eligibility = emp
+            ? { eligible: true, message: '' }
+            : A.bookingEligibility(u.email);
+        if (!eligibility.eligible) return bad(eligibility.message);
         const dateError = BookingDates.validate(from, until);
         if (dateError) return bad(dateError.message, dateError.field === 'pickup' ? '#fr' : '#to');
         if (nm.length < 2 || !/[A-Za-z]/.test(nm))

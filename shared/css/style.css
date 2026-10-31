@@ -8,6 +8,23 @@
     --red2: #ff4d5a;
     --gold: #d4a95a;
 }
+.booking-restriction {
+    margin: 0 0 18px;
+    padding: 14px 16px;
+    border: 1px solid rgba(225, 29, 46, 0.45);
+    border-radius: 12px;
+    background: rgba(225, 29, 46, 0.09);
+    color: var(--text);
+    line-height: 1.55;
+}
+.booking-restriction a {
+    color: var(--red2);
+    font-weight: 700;
+}
+.booking-action-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 * {
     box-sizing: border-box;
     margin: 0;
