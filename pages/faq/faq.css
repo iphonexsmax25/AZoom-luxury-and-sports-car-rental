@@ -297,32 +297,6 @@
 .faq-contact .btn {
     flex: 0 0 auto;
 }
-.faq-footer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px 28px;
-    padding: 28px 0;
-}
-.faq-footer .logo img {
-    height: 52px;
-}
-.faq-footer > p,
-.faq-footer > span {
-    color: var(--mute);
-    font-size: 12px;
-}
-.faq-footer-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    color: #b8b8c0;
-    font-size: 13px;
-}
-.faq-footer-links a:hover {
-    color: #fff;
-}
 .sr-only {
     position: absolute;
     width: 1px;
@@ -380,11 +354,6 @@
     }
     .faq-contact h2 {
         font-size: 21px;
-    }
-    .faq-footer {
-        align-items: flex-start;
-        flex-direction: column;
-        padding: 24px 0;
     }
 }
 @media (prefers-reduced-motion: reduce) {
