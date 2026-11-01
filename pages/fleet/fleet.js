@@ -1,7 +1,37 @@
 CarsData.ready.then(() => {
     /* Fleet page script: same card template as script.js, plus filters, search and sort.
    Car data lives in data/cars.json (loaded by cars-loader.js); compare logic lives in compare.js. */
-    const cars = CARS; // from data/cars.json (loaded by cars-loader.js)
+    const normalizeSearchText = (value) =>
+        String(value ?? '')
+            .normalize('NFD')
+            .replace(/\p{M}/gu, '')
+            .toLowerCase()
+            .replace(/[^\p{L}\p{N}]/gu, '');
+    const searchableValues = (value) => {
+        if (Array.isArray(value)) return value.flatMap(searchableValues);
+        if (value && typeof value === 'object')
+            return Object.entries(value).flatMap(([key, child]) =>
+                ['c', 'img', 'id', 'oid'].includes(key.toLowerCase()) ? [] : searchableValues(child),
+            );
+        return typeof value === 'string' || typeof value === 'number' ? [normalizeSearchText(value)] : [];
+    };
+    const searchTerms = (value) =>
+        String(value)
+            .trim()
+            .split(/\s+/)
+            .map(normalizeSearchText)
+            .filter(Boolean)
+            .reduce((terms, word) => {
+                const previous = terms[terms.length - 1];
+                if (previous && previous.length === 1 && /^\d+$/.test(word)) terms[terms.length - 1] += word;
+                else terms.push(word);
+                return terms;
+            }, []);
+    const cars = CARS.map((car, id) => ({
+        ...car,
+        id,
+        searchableText: searchableValues(car).join(' '),
+    }));
 
     const FUEL = { Petrol: 'Petrol', Hybrid: 'Hyb', Electric: 'EV', Diesel: 'Diesel' };
     const $ = (id) => document.getElementById(id);
@@ -87,7 +117,7 @@ CarsData.ready.then(() => {
             eligibilityNotice.hidden = true;
             eligibilityNotice.textContent = '';
         }
-        const q = $('q').value.trim().toLowerCase(),
+        const terms = searchTerms($('q').value),
             max = +$('max').value;
         const cat = picked('cat'),
             type = picked('type'),
@@ -102,10 +132,9 @@ CarsData.ready.then(() => {
                     .map((b) => b.carId),
             );
         const list = cars
-            .map((c, id) => ({ ...c, id }))
             .filter(
                 (c) =>
-                    (!q || (c.mk + ' ' + c.n).toLowerCase().includes(q)) &&
+                    terms.every((term) => c.searchableText.includes(term)) &&
                     (!cat.length || cat.includes(c.t)) &&
                     (!type.length || type.includes(c.ty)) &&
                     (!brand.length || brand.includes(c.mk)) &&
